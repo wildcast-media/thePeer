@@ -255,7 +255,7 @@ async function packCode(obj) {
 }
 async function unpackCode(code, expectedType) {
   code = code.replace(/\s+/g, '');
-  if (!code.startsWith(CODE_PREFIX)) throw new Error("That doesn't look like a The Peer code.");
+  if (!code.startsWith(CODE_PREFIX)) throw new Error("That doesn't look like a code from The Peer.");
   let obj;
   try {
     const stream = new Blob([b64u.dec(code.slice(CODE_PREFIX.length))]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
