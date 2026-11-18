@@ -1,4 +1,4 @@
-# PeerChat
+# The Peer
 
 Serverless, end-to-end encrypted chat that runs in any modern browser.
 

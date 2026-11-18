@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0f1419">
-<title>PeerChat</title>
+<title>The Peer</title>
 <style>
   :root {
     --bg: #0f1419; --panel: #182029; --panel2: #212b36; --line: #2c3845;
@@ -68,7 +68,7 @@
 
   <!-- First run: choose a display name -->
   <section id="v-setup" class="view">
-    <div class="brand"><div class="logo">P</div><h1>PeerChat</h1></div>
+    <div class="brand"><div class="logo">P</div><h1>The Peer</h1></div>
     <p>Private messaging that goes straight from your device to theirs. No accounts, no phone number, and no server that stores your messages.</p>
     <div class="card">
       <h2>What should people call you?</h2>
@@ -80,7 +80,7 @@
 
   <!-- Home -->
   <section id="v-home" class="view">
-    <div class="brand"><div class="logo">P</div><div><h1>PeerChat</h1><p id="hello"></p></div></div>
+    <div class="brand"><div class="logo">P</div><div><h1>The Peer</h1><p id="hello"></p></div></div>
     <button id="go-invite" class="primary big">Start a chat<small>Create an invite to send to a friend</small></button>
     <button id="go-join" class="big">Join a chat<small>Paste an invite a friend sent you</small></button>
     <label class="check"><input id="stun" type="checkbox" checked> Help connect across different networks (uses a public address-lookup service; it never sees your messages)</label>
@@ -149,7 +149,7 @@
 <script>
 'use strict';
 /*
- * PeerChat: serverless, end-to-end encrypted chat over WebRTC.
+ * The Peer: serverless, end-to-end encrypted chat over WebRTC.
  *
  * Connection: the two devices swap an "invite" and a "reply" code through any
  * channel they like. Those codes hold the WebRTC connection details, including
@@ -255,7 +255,7 @@ async function packCode(obj) {
 }
 async function unpackCode(code, expectedType) {
   code = code.replace(/\s+/g, '');
-  if (!code.startsWith(CODE_PREFIX)) throw new Error("That doesn't look like a PeerChat code.");
+  if (!code.startsWith(CODE_PREFIX)) throw new Error("That doesn't look like a The Peer code.");
   let obj;
   try {
     const stream = new Blob([b64u.dec(code.slice(CODE_PREFIX.length))]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
@@ -568,7 +568,7 @@ $('#verify-ok').onclick = async () => {
 
 (async () => {
   if (!window.RTCPeerConnection || !crypto.subtle || !window.CompressionStream) {
-    document.body.innerHTML = '<p style="padding:24px">This browser is too old for PeerChat. Please use a current version of Chrome, Edge, Firefox or Safari.</p>';
+    document.body.innerHTML = '<p style="padding:24px">This browser is too old for The Peer. Please use a current version of Chrome, Edge, Firefox or Safari.</p>';
     return;
   }
   if (await loadIdentity()) goHome(); else show('v-setup');
