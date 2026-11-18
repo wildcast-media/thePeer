@@ -20,32 +20,48 @@
   h1 { margin: 0; font-size: 28px; } h2 { margin: 0; font-size: 20px; }
   p { margin: 0; color: var(--muted); }
   .brand { display: flex; align-items: center; gap: 10px; }
-  .logo { width: 40px; height: 40px; border-radius: 12px; background: var(--accent); display: grid; place-items: center; color: var(--accent-ink); font-weight: 800; }
+  .brand > div:last-child { flex: 1; }
+  .logo { width: 40px; height: 40px; border-radius: 12px; background: var(--accent); display: grid; place-items: center; color: var(--accent-ink); font-weight: 800; flex: none; }
   .card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
-  input[type=text], textarea { width: 100%; background: var(--panel2); color: var(--text); border: 1px solid var(--line);
+  .invited { background: #173a2e; border-color: var(--mine); }
+  input[type=text] { width: 100%; background: var(--panel2); color: var(--text); border: 1px solid var(--line);
     border-radius: 12px; padding: 12px 14px; font: inherit; outline: none; }
   input[type=text]:focus, textarea:focus { border-color: var(--accent); }
-  textarea.code { font: 12px/1.4 ui-monospace, Menlo, Consolas, monospace; min-height: 110px; resize: vertical; word-break: break-all; }
-  button { font: inherit; font-weight: 600; border: 0; border-radius: 12px; padding: 12px 16px; cursor: pointer;
+  button { font: inherit; font-weight: 600; border-radius: 12px; padding: 12px 16px; cursor: pointer;
     background: var(--panel2); color: var(--text); border: 1px solid var(--line); }
   button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
   button:disabled { opacity: .5; cursor: default; }
   .row { display: flex; gap: 10px; flex-wrap: wrap; } .row > button { flex: 1; }
-  .big { padding: 18px; font-size: 17px; text-align: left; display: flex; flex-direction: column; gap: 2px; }
-  .big small { font-weight: 400; color: inherit; opacity: .75; }
-  .step { display: flex; gap: 10px; align-items: baseline; }
-  .num { flex: none; width: 24px; height: 24px; border-radius: 50%; background: var(--panel2); display: grid; place-items: center; font-size: 13px; font-weight: 700; }
-  .status { font-size: 14px; color: var(--muted); min-height: 1.4em; }
-  .status.err { color: var(--danger); }
-  label.check { display: flex; gap: 8px; align-items: center; font-size: 14px; color: var(--muted); }
+  .big { padding: 18px; font-size: 17px; }
   .back { align-self: flex-start; padding: 6px 12px; font-size: 14px; }
+  .net { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); flex: none; }
+  .dot.on { background: var(--accent); } .dot.bad { background: var(--danger); }
+
+  /* contacts */
+  .section-title { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-top: 8px; }
+  #contacts { display: flex; flex-direction: column; gap: 8px; }
+  .contact { display: flex; align-items: center; gap: 12px; text-align: left; padding: 12px 14px; background: var(--panel); }
+  .contact .who { flex: 1; min-width: 0; }
+  .contact .who b { display: block; }
+  .contact .who span { font-size: 13px; color: var(--muted); font-weight: 400; }
+  .empty { text-align: center; padding: 28px 12px; color: var(--muted); border: 1px dashed var(--line); border-radius: 16px; }
+
+  /* invite */
+  .qr { background: #fff; border-radius: 16px; padding: 14px; align-self: center; width: min(260px, 70vw); }
+  .qr svg { display: block; width: 100%; height: auto; }
+  .linkbox { font: 13px/1.4 ui-monospace, Menlo, Consolas, monospace; color: var(--muted); word-break: break-all; background: var(--panel2); border-radius: 12px; padding: 10px 12px; }
+  .waiting { display: flex; gap: 10px; align-items: center; color: var(--muted); font-size: 14px; }
+  .spinner { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--accent); animation: spin 1s linear infinite; flex: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   /* chat */
   #v-chat { padding: 0; gap: 0; }
   .chat-head { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--panel); border-bottom: 1px solid var(--line); }
-  .avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--panel2); display: grid; place-items: center; font-weight: 700; }
-  .who { flex: 1; min-width: 0; } .who b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .who span { font-size: 13px; color: var(--muted); }
+  .avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--panel2); display: grid; place-items: center; font-weight: 700; flex: none; position: relative; }
+  .avatar .dot { position: absolute; right: 0; bottom: 0; border: 2px solid var(--panel); width: 12px; height: 12px; }
+  .chat-head .who { flex: 1; min-width: 0; } .chat-head .who b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chat-head .who span { font-size: 13px; color: var(--muted); }
   .who span.ok { color: var(--accent); } .who span.warn { color: var(--warn); }
   .chat-head button { padding: 8px 12px; font-size: 14px; }
   #messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 6px; }
@@ -56,7 +72,7 @@
   .sys { align-self: center; font-size: 13px; color: var(--muted); background: var(--panel); padding: 6px 12px; border-radius: 10px; text-align: center; }
   .sys.err { color: var(--danger); }
   .composer { display: flex; gap: 8px; padding: 12px; padding-bottom: max(12px, env(safe-area-inset-bottom)); background: var(--panel); border-top: 1px solid var(--line); }
-  .composer textarea { min-height: 46px; max-height: 140px; resize: none; }
+  .composer textarea { flex: 1; background: var(--panel2); color: var(--text); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font: inherit; outline: none; min-height: 46px; max-height: 140px; resize: none; }
 
   dialog { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 16px; max-width: 380px; width: calc(100% - 32px); padding: 20px; }
   dialog::backdrop { background: rgba(0,0,0,.6); }
@@ -69,64 +85,46 @@
   <!-- First run: choose a display name -->
   <section id="v-setup" class="view">
     <div class="brand"><div class="logo">P</div><h1>The Peer</h1></div>
-    <p>Private messaging that goes straight from your device to theirs. No accounts, no phone number, and no server that stores your messages.</p>
+    <div class="card invited" id="invited-banner" hidden>
+      <h2><span id="invited-by"></span> invited you to chat</h2>
+      <p>Pick a name and you'll be connected.</p>
+    </div>
+    <p id="setup-intro">Private messaging that goes straight from your device to your friends'. No account, no phone number, no password.</p>
     <div class="card">
       <h2>What should people call you?</h2>
       <input id="name-input" type="text" maxlength="40" placeholder="Your name" autocomplete="off">
-      <button id="setup-btn" class="primary">Continue</button>
-      <p style="font-size:14px">A secret key that proves who you are is created on this device and never leaves it.</p>
+      <button id="setup-btn" class="primary big">Continue</button>
     </div>
   </section>
 
-  <!-- Home -->
+  <!-- Home: contacts -->
   <section id="v-home" class="view">
     <div class="brand"><div class="logo">P</div><div><h1>The Peer</h1><p id="hello"></p></div></div>
-    <button id="go-invite" class="primary big">Start a chat<small>Create an invite to send to a friend</small></button>
-    <button id="go-join" class="big">Join a chat<small>Paste an invite a friend sent you</small></button>
-    <label class="check"><input id="stun" type="checkbox" checked> Help connect across different networks (uses a public address-lookup service; it never sees your messages)</label>
+    <div class="net"><span class="dot" id="net-dot"></span><span id="net-text">Connecting…</span></div>
+    <button id="go-invite" class="primary big">+ Invite a friend</button>
+    <div class="section-title">Your chats</div>
+    <div id="contacts"></div>
   </section>
 
-  <!-- Inviter -->
+  <!-- Invite -->
   <section id="v-invite" class="view">
     <button class="back" data-home>← Back</button>
-    <h2>Start a chat</h2>
-    <div class="card">
-      <div class="step"><span class="num">1</span><p>Send this invite to your friend, through any app.</p></div>
-      <textarea id="invite-code" class="code" readonly placeholder="Creating invite…"></textarea>
-      <div class="row"><button id="invite-copy" disabled>Copy</button><button id="invite-share" disabled>Share…</button></div>
-    </div>
-    <div class="card">
-      <div class="step"><span class="num">2</span><p>Paste the reply they send back.</p></div>
-      <textarea id="reply-input" class="code" placeholder="Paste reply here"></textarea>
-      <button id="reply-btn" class="primary">Connect</button>
-    </div>
-    <div id="invite-status" class="status"></div>
-  </section>
-
-  <!-- Joiner -->
-  <section id="v-join" class="view">
-    <button class="back" data-home>← Back</button>
-    <h2>Join a chat</h2>
-    <div class="card">
-      <div class="step"><span class="num">1</span><p>Paste the invite your friend sent you.</p></div>
-      <textarea id="join-input" class="code" placeholder="Paste invite here"></textarea>
-      <button id="join-btn" class="primary">Create reply</button>
-    </div>
-    <div class="card" id="reply-card" hidden>
-      <div class="step"><span class="num">2</span><p>Send this reply back to your friend. The chat opens once they paste it.</p></div>
-      <textarea id="reply-code" class="code" readonly></textarea>
-      <div class="row"><button id="reply-copy">Copy</button><button id="reply-share">Share…</button></div>
-    </div>
-    <div id="join-status" class="status"></div>
+    <h2>Invite a friend</h2>
+    <p>Send this link to your friend through any app, or let them scan the code with their phone camera. Anyone with the link can connect to you once, so send it only to them.</p>
+    <button id="invite-share" class="primary big">Share link</button>
+    <div class="qr" id="invite-qr"></div>
+    <div class="linkbox" id="invite-link"></div>
+    <button id="invite-copy">Copy link</button>
+    <div class="waiting"><span class="spinner"></span><span>Waiting for your friend to open the link. You can leave this screen; they'll show up in your chats when they join.</span></div>
   </section>
 
   <!-- Chat -->
   <section id="v-chat" class="view">
     <div class="chat-head">
-      <div class="avatar" id="peer-initial">?</div>
-      <div class="who"><b id="peer-name">…</b><span id="peer-state">Securing connection…</span></div>
+      <button id="leave-btn" aria-label="Back">←</button>
+      <div class="avatar"><span id="peer-initial">?</span><span class="dot" id="peer-dot"></span></div>
+      <div class="who"><b id="peer-name">…</b><span id="peer-state"></span></div>
       <button id="verify-btn" disabled>Verify</button>
-      <button id="leave-btn">Leave</button>
     </div>
     <div id="messages"></div>
     <div class="composer">
@@ -146,28 +144,42 @@
   </div>
 </dialog>
 
+<script src="qrcode.js"></script>
 <script>
 'use strict';
 /*
  * The Peer: serverless, end-to-end encrypted chat over WebRTC.
  *
- * Connection: the two devices swap an "invite" and a "reply" code through any
- * channel they like. Those codes hold the WebRTC connection details, including
- * the DTLS certificate fingerprints, so the direct link is authenticated by the
- * code exchange itself.
+ * Finding each other: every pair of friends shares a random 128-bit room
+ * secret. It starts life in the invite link (in the #fragment, which browsers
+ * never send to the web host). Both devices derive a topic name and an
+ * AES-GCM key from it, and use free public MQTT relays only to say "I'm here"
+ * and to swap WebRTC connection details. Relays see only encrypted blobs on a
+ * random-looking topic. Chat messages never touch them: they flow directly
+ * between the two devices.
  *
- * On top of WebRTC's own encryption, each device has a long-term identity key
- * (ECDSA P-256, private half non-extractable, kept in IndexedDB). Every session
- * does a fresh signed ECDH exchange, derives one AES-256-GCM key per direction
- * with HKDF, and numbers every message so replayed or reordered messages are
- * rejected. Users can compare a safety number derived from both identity keys.
+ * Inside the direct link, on top of WebRTC's own encryption: each device has a
+ * long-term identity key (ECDSA P-256, non-extractable, kept in IndexedDB).
+ * Each session does a fresh signed ECDH exchange, derives one AES-256-GCM key
+ * per direction with HKDF, and numbers every message so replays are rejected.
+ * A saved contact must always present the same identity key, and users can
+ * compare a safety number derived from both identity keys.
  */
 
 const $ = (s) => document.querySelector(s);
 const enc = new TextEncoder();
 const dec = new TextDecoder();
-const STUN_SERVERS = [{ urls: 'stun:stun.l.google.com:19302' }];
-const CODE_PREFIX = 'PC1.';
+const STUN_SERVERS = [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun.cloudflare.com:3478' }];
+const DEFAULT_RELAYS = [
+  'wss://broker.emqx.io:8084/mqtt',
+  'wss://broker.hivemq.com:8884/mqtt',
+  'wss://test.mosquitto.org:8081/mqtt',
+];
+// Developers can point at their own relay for testing: localStorage['thepeer.relays'] = '["ws://localhost:8888"]'
+const RELAYS = JSON.parse(localStorage.getItem('thepeer.relays') || 'null') || DEFAULT_RELAYS;
+const INVITE_TTL = 14 * 24 * 3600 * 1000;
+const PRESENCE_EVERY = 8000;
+const ONLINE_WINDOW = 20000;
 
 // ---------- small helpers ----------
 const b64u = {
@@ -181,6 +193,8 @@ const b64u = {
     return Uint8Array.from(s, (c) => c.charCodeAt(0));
   },
 };
+const hex = (bytes) => Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+const randomBytes = (n) => crypto.getRandomValues(new Uint8Array(n));
 function concat(...arrs) {
   const out = new Uint8Array(arrs.reduce((n, a) => n + a.length, 0));
   let i = 0;
@@ -192,19 +206,17 @@ function compareBytes(a, b) {
   return a.length - b.length;
 }
 const sha256 = async (data) => new Uint8Array(await crypto.subtle.digest('SHA-256', data));
+let currentView = null;
 function show(id) {
+  currentView = id;
   document.querySelectorAll('.view').forEach((v) => v.classList.toggle('active', v.id === id));
 }
-function setStatus(el, text, isErr = false) { el.textContent = text; el.classList.toggle('err', isErr); }
 async function copyText(text, btn) {
   try { await navigator.clipboard.writeText(text); }
   catch { const t = document.createElement('textarea'); t.value = text; document.body.append(t); t.select(); document.execCommand('copy'); t.remove(); }
   const old = btn.textContent; btn.textContent = 'Copied!'; setTimeout(() => (btn.textContent = old), 1500);
 }
-async function shareText(text, btn) {
-  if (navigator.share) { try { await navigator.share({ text }); } catch { /* user cancelled */ } }
-  else copyText(text, btn);
-}
+const cleanName = (n) => String(n || '').trim().slice(0, 40) || 'Friend';
 
 // ---------- tiny IndexedDB key-value store ----------
 let dbPromise;
@@ -233,85 +245,292 @@ async function kvSet(key, val) {
   });
 }
 
-// ---------- identity ----------
+// ---------- identity & saved state ----------
 let me = null; // { name, keys: CryptoKeyPair, pubRaw: Uint8Array }
-async function loadIdentity() {
+let contacts = {}; // identity id -> { name, verified, secret, lastSeen }
+let invites = {}; // secret -> { created }            (links I sent)
+let joins = {}; // secret -> { from, created }        (links I opened)
+
+async function loadState() {
+  contacts = (await kvGet('contacts')) || {};
+  // Contacts from the old code-based version had no room secret; they can't reconnect.
+  for (const [id, c] of Object.entries(contacts)) if (!c.secret) delete contacts[id];
+  const now = Date.now();
+  invites = Object.fromEntries(Object.entries((await kvGet('invites')) || {}).filter(([, v]) => now - v.created < INVITE_TTL));
+  joins = Object.fromEntries(Object.entries((await kvGet('joins')) || {}).filter(([, v]) => now - v.created < INVITE_TTL));
   const saved = await kvGet('identity');
-  if (!saved) return false;
-  me = { ...saved, pubRaw: new Uint8Array(await crypto.subtle.exportKey('raw', saved.keys.publicKey)) };
-  return true;
+  if (saved) me = { ...saved, pubRaw: new Uint8Array(await crypto.subtle.exportKey('raw', saved.keys.publicKey)) };
 }
+const saveContacts = () => kvSet('contacts', contacts);
+const saveInvites = () => kvSet('invites', invites);
+const saveJoins = () => kvSet('joins', joins);
+
 async function createIdentity(name) {
-  // Private key is non-extractable: page scripts can use it but never read it out.
+  // The private key is non-extractable: page scripts can use it but never read it out.
   const keys = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign', 'verify']);
   await kvSet('identity', { name, keys });
-  await loadIdentity();
+  me = { name, keys, pubRaw: new Uint8Array(await crypto.subtle.exportKey('raw', keys.publicKey)) };
 }
 
-// ---------- connection codes ----------
-async function packCode(obj) {
-  const stream = new Blob([JSON.stringify(obj)]).stream().pipeThrough(new CompressionStream('deflate-raw'));
-  return CODE_PREFIX + b64u.enc(new Uint8Array(await new Response(stream).arrayBuffer()));
+// ---------- minimal MQTT 3.1.1 client over WebSocket (QoS 0 only) ----------
+function mqttString(s) { const b = enc.encode(s); return concat(new Uint8Array([b.length >> 8, b.length & 255]), b); }
+function mqttPacket(first, body) {
+  const len = [];
+  let n = body.length;
+  do { let d = n % 128; n = Math.floor(n / 128); if (n > 0) d |= 128; len.push(d); } while (n > 0);
+  return concat(new Uint8Array([first, ...len]), body);
 }
-async function unpackCode(code, expectedType) {
-  code = code.replace(/\s+/g, '');
-  if (!code.startsWith(CODE_PREFIX)) throw new Error("That doesn't look like a code from The Peer.");
-  let obj;
-  try {
-    const stream = new Blob([b64u.dec(code.slice(CODE_PREFIX.length))]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
-    obj = JSON.parse(await new Response(stream).text());
-  } catch { throw new Error('That code is damaged or incomplete. Try copying it again.'); }
-  if (obj.t !== expectedType) {
-    throw new Error(expectedType === 'offer' ? 'That is a reply, not an invite.' : 'That is an invite, not a reply.');
+
+class MqttConnection {
+  constructor(url, onMessage, onChange) {
+    this.url = url; this.onMessage = onMessage; this.onChange = onChange;
+    this.topics = new Set(); this.up = false; this.packetId = 1; this.backoff = 1000;
+    this.connect();
   }
-  return obj;
+  connect() {
+    let ws;
+    try { ws = new WebSocket(this.url, ['mqtt']); } catch { return this.retry(); }
+    this.ws = ws; this.buf = new Uint8Array(0);
+    ws.binaryType = 'arraybuffer';
+    ws.onopen = () => {
+      const clientId = 'tp' + hex(randomBytes(10));
+      const body = concat(mqttString('MQTT'), new Uint8Array([4, 0x02, 0, 60]), mqttString(clientId));
+      ws.send(mqttPacket(0x10, body));
+    };
+    ws.onmessage = (e) => this.feed(new Uint8Array(e.data));
+    ws.onclose = ws.onerror = () => {
+      if (this.ws !== ws) return;
+      this.ws = null;
+      clearInterval(this.pinger);
+      if (this.up) { this.up = false; this.onChange(); }
+      this.retry();
+    };
+  }
+  retry() {
+    setTimeout(() => this.connect(), this.backoff);
+    this.backoff = Math.min(this.backoff * 2, 30000);
+  }
+  feed(chunk) {
+    this.buf = concat(this.buf, chunk);
+    for (;;) {
+      if (this.buf.length < 2) return;
+      let len = 0, mult = 1, i = 1, byte;
+      do {
+        if (i >= this.buf.length) return;
+        byte = this.buf[i++]; len += (byte & 127) * mult; mult *= 128;
+      } while (byte & 128);
+      if (this.buf.length < i + len) return;
+      const type = this.buf[0] >> 4, qos = (this.buf[0] >> 1) & 3;
+      const body = this.buf.subarray(i, i + len);
+      this.buf = this.buf.slice(i + len);
+      if (type === 2 && body[1] === 0) { // CONNACK accepted
+        this.up = true; this.backoff = 1000;
+        for (const t of this.topics) this.sendSubscribe(t);
+        this.pinger = setInterval(() => this.send(new Uint8Array([0xc0, 0])), 30000);
+        this.onChange();
+      } else if (type === 3) { // PUBLISH
+        const tlen = (body[0] << 8) | body[1];
+        const topic = dec.decode(body.subarray(2, 2 + tlen));
+        this.onMessage(topic, body.subarray(2 + tlen + (qos ? 2 : 0)));
+      }
+    }
+  }
+  send(bytes) { if (this.ws?.readyState === 1) this.ws.send(bytes); }
+  nextId() { this.packetId = (this.packetId % 65535) + 1; return new Uint8Array([this.packetId >> 8, this.packetId & 255]); }
+  sendSubscribe(topic) { if (this.up) this.send(mqttPacket(0x82, concat(this.nextId(), mqttString(topic), new Uint8Array([0])))); }
+  subscribe(topic) { if (!this.topics.has(topic)) { this.topics.add(topic); this.sendSubscribe(topic); } }
+  unsubscribe(topic) {
+    if (this.topics.delete(topic) && this.up) this.send(mqttPacket(0xa2, concat(this.nextId(), mqttString(topic))));
+  }
+  publish(topic, payload) { if (this.up) this.send(mqttPacket(0x30, concat(mqttString(topic), payload))); }
 }
 
-// ---------- WebRTC ----------
-let pc = null;
+// The same message goes through every relay; whichever arrives first wins.
+const relay = {
+  conns: [], rooms: new Map(), // topic -> Room
+  start() { this.conns = RELAYS.map((u) => new MqttConnection(u, (t, p) => this.rooms.get(t)?.receive(p), updateNetStatus)); },
+  upCount() { return this.conns.filter((c) => c.up).length; },
+  add(room) { this.rooms.set(room.topic, room); this.conns.forEach((c) => c.subscribe(room.topic)); },
+  remove(room) { this.rooms.delete(room.topic); this.conns.forEach((c) => c.unsubscribe(room.topic)); },
+  publish(topic, payload) { this.conns.forEach((c) => c.publish(topic, payload)); },
+};
+
+// ---------- rooms: one per friend (or pending invite) ----------
+const MY_PEER = hex(randomBytes(8)); // changes on every app launch
+const roomsBySecret = new Map();
+
+class Room {
+  // kind: 'contact' (saved friend), 'invite' (link I sent), 'join' (link I opened)
+  static async open(secret, kind, extra = {}) {
+    if (roomsBySecret.has(secret)) return Object.assign(roomsBySecret.get(secret), { kind }, extra);
+    const base = await crypto.subtle.importKey('raw', b64u.dec(secret), 'HKDF', false, ['deriveBits', 'deriveKey']);
+    const params = (info) => ({ name: 'HKDF', hash: 'SHA-256', salt: enc.encode('thepeer-room-v1'), info: enc.encode(info) });
+    const topicBits = new Uint8Array(await crypto.subtle.deriveBits(params('topic'), base, 128));
+    const key = await crypto.subtle.deriveKey(params('key'), base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+    const room = Object.assign(new Room(), { secret, kind, key, topic: 'thepeer/v1/' + hex(topicBits), lastSeen: 0, seen: new Set() }, extra);
+    roomsBySecret.set(secret, room);
+    relay.add(room);
+    return room;
+  }
+  close() { relay.remove(this); roomsBySecret.delete(this.secret); }
+  label() {
+    if (this.kind === 'contact') return contacts[this.contactId]?.name || 'Friend';
+    if (this.kind === 'join') return this.from || 'Friend';
+    return 'your friend';
+  }
+  online() { return Date.now() - this.lastSeen < ONLINE_WINDOW; }
+  async send(msg) {
+    const iv = randomBytes(12);
+    const body = enc.encode(JSON.stringify({ ...msg, from: MY_PEER, id: hex(randomBytes(8)) }));
+    const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, this.key, body));
+    relay.publish(this.topic, concat(iv, ct));
+  }
+  async receive(payload) {
+    let msg;
+    try {
+      const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: payload.subarray(0, 12) }, this.key, payload.subarray(12));
+      msg = JSON.parse(dec.decode(pt));
+    } catch { return; } // not for us, or tampered with
+    if (msg.from === MY_PEER || this.seen.has(msg.id)) return;
+    this.seen.add(msg.id);
+    if (this.seen.size > 500) this.seen = new Set([...this.seen].slice(-250));
+    if (msg.to && msg.to !== MY_PEER) return;
+    const wasOnline = this.online();
+    this.lastSeen = Date.now();
+    if (!wasOnline) refreshPresence();
+    onRoomMessage(this, msg).catch((e) => console.error(e));
+  }
+}
+
+// ---------- connecting two devices ----------
+// call: { room, role: 'dialer' | 'offerer', peer, pc, knocker, timer }
+let call = null;
 let session = null;
 
-function newPeerConnection() {
-  closeConnection();
-  pc = new RTCPeerConnection({ iceServers: $('#stun').checked ? STUN_SERVERS : [] });
-  const thisPc = pc;
+async function onRoomMessage(room, m) {
+  if (m.t === 'knock') {
+    if (call?.room === room) {
+      // Both sides dialed at once: the lower id makes the offer.
+      if (call.role === 'dialer' && !call.pc && MY_PEER < m.from) startOffer(room, m.from);
+      return;
+    }
+    if (call) return; // busy in another chat; they keep knocking and connect once we're free
+    startOffer(room, m.from);
+  } else if (m.t === 'offer') {
+    if (call?.room === room && call.role === 'dialer' && !call.pc) answerOffer(call, m);
+  } else if (m.t === 'answer') {
+    const c = call;
+    if (c?.room === room && c.role === 'offerer' && c.peer === m.from && c.pc?.signalingState === 'have-local-offer') {
+      await c.pc.setRemoteDescription({ type: 'answer', sdp: m.sdp });
+    }
+  }
+}
+
+function makePeerConnection(c) {
+  const pc = new RTCPeerConnection({ iceServers: STUN_SERVERS });
   pc.onconnectionstatechange = () => {
-    if (thisPc !== pc) return;
-    if (['failed', 'closed'].includes(pc.connectionState)) onDisconnected();
+    if (call === c && ['failed', 'closed'].includes(pc.connectionState)) connectionLost(c);
   };
   return pc;
 }
-function waitForIce(conn) {
-  // Gather all network candidates up front so a single code is enough.
+function waitForIce(pc) {
+  // Gather all network candidates up front so one message is enough.
   return new Promise((res) => {
-    if (conn.iceGatheringState === 'complete') return res();
-    const timer = setTimeout(res, 5000);
-    conn.addEventListener('icegatheringstatechange', () => {
-      if (conn.iceGatheringState === 'complete') { clearTimeout(timer); res(); }
+    if (pc.iceGatheringState === 'complete') return res();
+    const timer = setTimeout(res, 4000);
+    pc.addEventListener('icegatheringstatechange', () => {
+      if (pc.iceGatheringState === 'complete') { clearTimeout(timer); res(); }
     });
   });
 }
-function closeConnection() {
-  const old = pc;
-  pc = null; session = null;
-  if (old) { try { old.close(); } catch {} }
+function watchChannel(c, ch) {
+  ch.onopen = () => { if (call === c) attachChannel(c, ch); };
 }
 
-// ---------- encrypted session ----------
+// I want to talk to whoever is in this room: keep knocking until they answer.
+function dial(room) {
+  endCall();
+  const c = call = { room, role: 'dialer' };
+  openChat(room);
+  setPeerState(room.online() ? 'Connecting…' : `Waiting for ${room.label()} to open The Peer…`);
+  startKnocking(c);
+}
+function startKnocking(c) {
+  const started = Date.now();
+  const knock = () => {
+    if (call !== c) return;
+    c.room.send({ t: 'knock' });
+    if (c.room.kind === 'join' && !c.warned && Date.now() - started > 60000) {
+      c.warned = true;
+      addSystem(`Still waiting. ${c.room.label()} needs to have The Peer open. If they already connected with this link before, it no longer works: ask them for a new one.`);
+    }
+  };
+  knock();
+  c.knocker = setInterval(knock, 3000);
+}
+
+// Someone knocked: I make the WebRTC offer.
+async function startOffer(room, peer) {
+  endCall();
+  const c = call = { room, role: 'offerer', peer };
+  openChat(room);
+  setPeerState('Connecting…');
+  c.pc = makePeerConnection(c);
+  watchChannel(c, c.pc.createDataChannel('chat', { ordered: true }));
+  await c.pc.setLocalDescription(await c.pc.createOffer());
+  await waitForIce(c.pc);
+  if (call !== c) return;
+  room.send({ t: 'offer', to: peer, sdp: c.pc.localDescription.sdp });
+  c.timer = setTimeout(() => {
+    if (call === c && !session?.ready) connectionLost(c, "Couldn't connect. It will retry automatically while you both have the app open.");
+  }, 25000);
+}
+
+async function answerOffer(c, m) {
+  clearInterval(c.knocker);
+  c.peer = m.from;
+  c.pc = makePeerConnection(c);
+  c.pc.ondatachannel = (e) => watchChannel(c, e.channel);
+  await c.pc.setRemoteDescription({ type: 'offer', sdp: m.sdp });
+  await c.pc.setLocalDescription(await c.pc.createAnswer());
+  await waitForIce(c.pc);
+  if (call !== c) return;
+  c.room.send({ t: 'answer', to: m.from, sdp: c.pc.localDescription.sdp });
+  c.timer = setTimeout(() => {
+    if (call !== c || session?.ready) return;
+    try { c.pc.close(); } catch {}
+    c.pc = null;
+    startKnocking(c); // try again
+  }, 25000);
+}
+
+function endCall() {
+  const c = call;
+  call = null; session = null;
+  if (!c) return;
+  clearInterval(c.knocker); clearTimeout(c.timer);
+  try { c.pc?.close(); } catch {}
+}
+
+function connectionLost(c, text = 'Disconnected. Go back and tap the chat to reconnect.') {
+  if (call !== c) return;
+  endCall();
+  addSystem(text, true);
+  setChatEnabled(false);
+  setPeerState('Disconnected');
+}
+
+// ---------- encrypted session over the direct link ----------
 const HELLO_LABEL = enc.encode('peerchat-hello-v1');
 
-function attachChannel(channel) {
-  const s = {
-    channel, ready: false, peer: null, sendKey: null, recvKey: null,
-    sendCounter: 0, recvCounter: -1, safety: null, queue: Promise.resolve(),
-  };
+function attachChannel(c, channel) {
+  clearTimeout(c.timer);
+  const s = { call: c, channel, ready: false, peer: null, sendKey: null, recvKey: null, sendCounter: 0, recvCounter: -1, safety: null, queue: Promise.resolve() };
   session = s;
-  s.helloSent = new Promise((res) => (channel.onopen = () => res(sendHello(s))));
-  // Handle incoming data strictly in order.
+  s.helloSent = sendHello(s);
   channel.onmessage = (e) => { s.queue = s.queue.then(() => onData(s, e.data)).catch((err) => fail(s, err)); };
-  channel.onclose = () => { if (session === s) onDisconnected(); };
-  show('v-chat');
-  resetChatUI();
+  channel.onclose = () => { if (session === s) connectionLost(c); };
+  setPeerState('Securing connection…');
 }
 
 async function sendHello(s) {
@@ -319,9 +538,7 @@ async function sendHello(s) {
   s.ephRaw = new Uint8Array(await crypto.subtle.exportKey('raw', s.eph.publicKey));
   const sig = new Uint8Array(await crypto.subtle.sign(
     { name: 'ECDSA', hash: 'SHA-256' }, me.keys.privateKey, concat(HELLO_LABEL, s.ephRaw)));
-  s.channel.send(JSON.stringify({
-    t: 'hello', name: me.name, id: b64u.enc(me.pubRaw), eph: b64u.enc(s.ephRaw), sig: b64u.enc(sig),
-  }));
+  s.channel.send(JSON.stringify({ t: 'hello', name: me.name, id: b64u.enc(me.pubRaw), eph: b64u.enc(s.ephRaw), sig: b64u.enc(sig) }));
 }
 
 async function onData(s, raw) {
@@ -329,50 +546,70 @@ async function onData(s, raw) {
   const m = JSON.parse(raw);
   if (m.t === 'hello' && !s.ready) return onHello(s, m);
   if (m.t === 'msg' && s.ready) return onMessage(s, m);
-  throw new Error('Unexpected data from peer');
+  throw new Error('Unexpected data from the other device.');
 }
 
 async function onHello(s, h) {
   await s.helloSent;
   const peerId = b64u.dec(h.id), peerEph = b64u.dec(h.eph);
   const idKey = await crypto.subtle.importKey('raw', peerId, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['verify']);
-  const ok = await crypto.subtle.verify(
-    { name: 'ECDSA', hash: 'SHA-256' }, idKey, b64u.dec(h.sig), concat(HELLO_LABEL, peerEph));
+  const ok = await crypto.subtle.verify({ name: 'ECDSA', hash: 'SHA-256' }, idKey, b64u.dec(h.sig), concat(HELLO_LABEL, peerEph));
   if (!ok) throw new Error("The other device's identity signature is invalid.");
-  if (compareBytes(peerId, me.pubRaw) === 0) throw new Error('You connected to yourself.');
+  if (compareBytes(peerId, me.pubRaw) === 0) throw new Error('You opened your own invite link. Send it to a friend instead.');
+
+  const idStr = b64u.enc(peerId);
+  const room = s.call.room;
+  if (room.kind === 'contact' && room.contactId !== idStr) {
+    throw new Error(`This device is not the ${room.label()} you saved.`);
+  }
 
   // ECDH -> HKDF -> one AES-GCM key per direction.
   const peerEphKey = await crypto.subtle.importKey('raw', peerEph, { name: 'ECDH', namedCurve: 'P-256' }, false, []);
   const shared = await crypto.subtle.deriveBits({ name: 'ECDH', public: peerEphKey }, s.eph.privateKey, 256);
-  const hkdfKey = await crypto.subtle.importKey('raw', shared, 'HKDF', false, ['deriveKey']);
+  const hkdfKey = await crypto.subtle.importKey('raw', shared, 'HKDF', false, ['deriveKey', 'deriveBits']);
   const iAmLow = compareBytes(s.ephRaw, peerEph) < 0;
   const salt = await sha256(iAmLow ? concat(s.ephRaw, peerEph) : concat(peerEph, s.ephRaw));
   const dirKey = (info, usage) => crypto.subtle.deriveKey(
-    { name: 'HKDF', hash: 'SHA-256', salt, info: enc.encode(info) },
-    hkdfKey, { name: 'AES-GCM', length: 256 }, false, [usage]);
+    { name: 'HKDF', hash: 'SHA-256', salt, info: enc.encode(info) }, hkdfKey, { name: 'AES-GCM', length: 256 }, false, [usage]);
   s.sendKey = await dirKey(iAmLow ? 'peerchat low->high' : 'peerchat high->low', 'encrypt');
   s.recvKey = await dirKey(iAmLow ? 'peerchat high->low' : 'peerchat low->high', 'decrypt');
-  s.eph = null; // forget the ephemeral private key reference
+  s.eph = null;
 
-  // Safety number from both identity keys (same on both sides).
+  // Safety number from both identity keys (the same on both devices).
   const [a, b] = compareBytes(me.pubRaw, peerId) < 0 ? [me.pubRaw, peerId] : [peerId, me.pubRaw];
   const digest = await sha256(concat(enc.encode('peerchat-safety-v1'), a, b));
   const dv = new DataView(digest.buffer);
   s.safety = Array.from({ length: 6 }, (_, i) => String(dv.getUint32(i * 4) % 100000).padStart(5, '0'));
 
-  const idStr = b64u.enc(peerId);
-  const contacts = (await kvGet('contacts')) || {};
-  const known = contacts[idStr];
-  s.peer = { id: idStr, name: String(h.name || 'Friend').slice(0, 40), verified: !!known?.verified };
-  contacts[idStr] = { name: s.peer.name, verified: s.peer.verified, lastSeen: Date.now() };
-  await kvSet('contacts', contacts);
+  // Save or update the contact.
+  const isNew = !contacts[idStr];
+  const old = contacts[idStr];
+  let pairSecret = room.secret;
+  if (room.kind !== 'contact') {
+    // First connection through an invite link: move to a fresh private room that only these two
+    // devices can work out (from this session's key exchange), so the link is now useless to anyone.
+    const bits = await crypto.subtle.deriveBits(
+      { name: 'HKDF', hash: 'SHA-256', salt, info: enc.encode('thepeer pair room v1') }, hkdfKey, 128);
+    pairSecret = b64u.enc(new Uint8Array(bits));
+    delete invites[room.secret]; delete joins[room.secret];
+    room.close();
+    await Promise.all([saveInvites(), saveJoins()]);
+    if (currentView === 'v-invite') renderInviteIfNeeded();
+  }
+  if (old?.secret && old.secret !== pairSecret) roomsBySecret.get(old.secret)?.close();
+  contacts[idStr] = { name: cleanName(h.name), verified: !!old?.verified, secret: pairSecret, lastSeen: Date.now() };
+  await saveContacts();
+  const pairRoom = await Room.open(pairSecret, 'contact', { contactId: idStr });
+  pairRoom.lastSeen = Date.now();
+  s.call.room = pairRoom;
 
+  s.peer = { id: idStr, name: contacts[idStr].name };
   s.ready = true;
-  onSecure(s, !!known);
+  onSecure(s, isNew);
 }
 
 async function onMessage(s, m) {
-  if (!Number.isInteger(m.n) || m.n <= s.recvCounter) throw new Error('Replayed or out-of-order message rejected.');
+  if (!Number.isInteger(m.n) || m.n <= s.recvCounter) throw new Error('A replayed or out-of-order message was rejected.');
   const iv = new Uint8Array(12);
   new DataView(iv.buffer).setUint32(8, m.n);
   const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, s.recvKey, b64u.dec(m.c));
@@ -388,8 +625,7 @@ async function sendMessage(text) {
   const iv = new Uint8Array(12);
   new DataView(iv.buffer).setUint32(8, n); // unique per key, never reused
   const ts = Date.now();
-  const ct = new Uint8Array(await crypto.subtle.encrypt(
-    { name: 'AES-GCM', iv }, s.sendKey, enc.encode(JSON.stringify({ text, ts }))));
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, s.sendKey, enc.encode(JSON.stringify({ text, ts }))));
   s.channel.send(JSON.stringify({ t: 'msg', n, c: b64u.enc(ct) }));
   addMessage(text, 'me', ts);
 }
@@ -397,49 +633,131 @@ async function sendMessage(text) {
 function fail(s, err) {
   if (session !== s) return;
   console.error(err);
-  addSystem('Security error: ' + err.message + ' The chat was closed.', true);
-  closeConnection();
-  setChatEnabled(false);
-  $('#peer-state').textContent = 'Disconnected';
-  $('#peer-state').className = '';
+  connectionLost(s.call, 'Security problem: ' + err.message + ' The chat was closed.');
 }
 
-// ---------- chat UI ----------
-function resetChatUI() {
+// ---------- invites ----------
+function inviteLink(secret) {
+  return `${location.origin}${location.pathname}#join=${secret}&n=${encodeURIComponent(me.name)}`;
+}
+let shownInvite = null;
+async function showInvite() {
+  // Reuse an unused invite so the link doesn't change every time.
+  let secret = Object.keys(invites).sort((x, y) => invites[y].created - invites[x].created)[0];
+  if (!secret) {
+    secret = b64u.enc(randomBytes(16));
+    invites[secret] = { created: Date.now() };
+    await saveInvites();
+  }
+  await Room.open(secret, 'invite');
+  shownInvite = secret;
+  const link = inviteLink(secret);
+  $('#invite-link').textContent = link;
+  const qr = qrcode(0, 'M');
+  qr.addData(link);
+  qr.make();
+  $('#invite-qr').innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+  show('v-invite');
+}
+function renderInviteIfNeeded() { if (shownInvite && !invites[shownInvite]) shownInvite = null; }
+
+// Called when the app is opened through someone's invite link.
+async function acceptInviteFromUrl() {
+  const params = new URLSearchParams(location.hash.slice(1));
+  const secret = params.get('join');
+  if (!secret) return null;
+  history.replaceState(null, '', location.pathname + location.search);
+  try { if (b64u.dec(secret).length !== 16) return null; } catch { return null; }
+  if (invites[secret]) return null; // my own link
+  joins[secret] = { from: cleanName(params.get('n')), created: Date.now() };
+  await saveJoins();
+  return { secret, from: joins[secret].from };
+}
+async function startJoin(j) {
+  dial(await Room.open(j.secret, 'join', { from: j.from }));
+}
+
+// ---------- UI ----------
+function updateNetStatus() {
+  const up = relay.upCount();
+  $('#net-dot').className = 'dot ' + (up ? 'on' : 'bad');
+  $('#net-text').textContent = up ? 'Ready' : 'Offline. Check your internet connection.';
+}
+
+function contactRooms() {
+  return Object.entries(contacts)
+    .map(([id, c]) => ({ id, c, room: roomsBySecret.get(c.secret) }))
+    .filter((x) => x.room);
+}
+function refreshPresence() {
+  if (currentView === 'v-home') renderContacts();
+  if (call) $('#peer-dot').className = 'dot' + (call.room.online() || session?.ready ? ' on' : '');
+}
+function renderContacts() {
+  const box = $('#contacts');
+  box.innerHTML = '';
+  const list = contactRooms().sort((x, y) => (y.room.online() - x.room.online()) || (y.c.lastSeen - x.c.lastSeen));
+  const pending = Object.entries(joins);
+  if (!list.length && !pending.length) {
+    box.innerHTML = '<div class="empty">No chats yet.<br>Tap <b>Invite a friend</b> to get started.</div>';
+    return;
+  }
+  for (const { c, room } of list) {
+    const btn = document.createElement('button');
+    btn.className = 'contact';
+    const av = document.createElement('div'); av.className = 'avatar';
+    av.textContent = (c.name[0] || '?').toUpperCase();
+    const dot = document.createElement('span'); dot.className = 'dot' + (room.online() ? ' on' : ''); av.append(dot);
+    const who = document.createElement('div'); who.className = 'who';
+    const b = document.createElement('b'); b.textContent = c.name + (c.verified ? ' ✓' : '');
+    const sp = document.createElement('span'); sp.textContent = room.online() ? 'Online' : 'Offline';
+    who.append(b, sp);
+    btn.append(av, who);
+    btn.onclick = () => dial(room);
+    box.append(btn);
+  }
+  for (const [secret, j] of pending) {
+    const btn = document.createElement('button');
+    btn.className = 'contact';
+    const who = document.createElement('div'); who.className = 'who';
+    const b = document.createElement('b'); b.textContent = j.from;
+    const sp = document.createElement('span'); sp.textContent = 'Invitation, waiting to connect';
+    who.append(b, sp);
+    btn.append(who);
+    btn.onclick = () => startJoin({ secret, from: j.from });
+    box.append(btn);
+  }
+}
+
+function openChat(room) {
+  show('v-chat');
   $('#messages').innerHTML = '';
-  $('#peer-name').textContent = 'Connecting…';
-  $('#peer-initial').textContent = '?';
-  $('#peer-state').textContent = 'Securing connection…';
-  $('#peer-state').className = '';
+  const name = room.label();
+  $('#peer-name').textContent = name;
+  $('#peer-initial').textContent = (name[0] || '?').toUpperCase();
+  $('#peer-dot').className = 'dot' + (room.online() ? ' on' : '');
   $('#verify-btn').disabled = true;
   setChatEnabled(false);
 }
+function setPeerState(text, cls = '') { const el = $('#peer-state'); el.textContent = text; el.className = cls; }
 function setChatEnabled(on) {
   $('#msg-input').disabled = !on; $('#send-btn').disabled = !on;
   if (on) $('#msg-input').focus();
 }
-function updatePeerState(s) {
-  const el = $('#peer-state');
-  if (s.peer.verified) { el.textContent = '🔒 Encrypted · Verified'; el.className = 'ok'; }
-  else { el.textContent = '🔒 Encrypted · Not verified yet'; el.className = 'warn'; }
+function updateSecureState(s) {
+  if (s.peer.verified || contacts[s.peer.id]?.verified) setPeerState('🔒 Encrypted · Verified', 'ok');
+  else setPeerState('🔒 Encrypted · Not verified yet', 'warn');
 }
-function onSecure(s, known) {
+function onSecure(s, isNew) {
   $('#peer-name').textContent = s.peer.name;
   $('#peer-initial').textContent = (s.peer.name[0] || '?').toUpperCase();
+  $('#peer-dot').className = 'dot on';
   $('#verify-btn').disabled = false;
-  updatePeerState(s);
-  addSystem(known
-    ? `Connected to ${s.peer.name}. Messages are end-to-end encrypted.`
-    : `Connected to ${s.peer.name} for the first time. Tap Verify to make sure it's really them.`);
+  updateSecureState(s);
+  addSystem(isNew
+    ? `Connected to ${s.peer.name}. They're saved in your chats now. Tap Verify to make sure it's really them.`
+    : `Connected to ${s.peer.name}. Messages are end-to-end encrypted.`);
   setChatEnabled(true);
-}
-function onDisconnected() {
-  if (!pc && !session) return;
-  closeConnection();
-  addSystem('Disconnected. Tap Leave to start a new chat.', true);
-  setChatEnabled(false);
-  $('#peer-state').textContent = 'Disconnected';
-  $('#peer-state').className = '';
 }
 function addMessage(text, who, ts) {
   const box = $('#messages');
@@ -459,83 +777,34 @@ function addSystem(text, isErr = false) {
   $('#messages').append(div);
   $('#messages').scrollTop = $('#messages').scrollHeight;
 }
-
-// ---------- flows ----------
-async function startInvite() {
-  show('v-invite');
-  const st = $('#invite-status');
-  $('#invite-code').value = ''; $('#reply-input').value = '';
-  $('#invite-copy').disabled = $('#invite-share').disabled = true;
-  setStatus(st, 'Creating invite…');
-  try {
-    const conn = newPeerConnection();
-    attachChannelLater(conn.createDataChannel('chat', { ordered: true }));
-    await conn.setLocalDescription(await conn.createOffer());
-    await waitForIce(conn);
-    if (conn !== pc) return;
-    $('#invite-code').value = await packCode({ t: 'offer', sdp: conn.localDescription.sdp });
-    $('#invite-copy').disabled = $('#invite-share').disabled = false;
-    setStatus(st, '');
-  } catch (e) { setStatus(st, 'Could not create invite: ' + e.message, true); }
-}
-// The inviter's channel exists before the chat screen should show; open the chat when it connects.
-function attachChannelLater(channel) {
-  const conn = pc;
-  channel.addEventListener('open', () => { if (pc === conn && !session) { attachChannel(channel); channel.onopen?.(); } }, { once: true });
-}
-async function acceptReply() {
-  const st = $('#invite-status');
-  try {
-    if (!pc || pc.signalingState !== 'have-local-offer') throw new Error('Create a new invite first.');
-    const o = await unpackCode($('#reply-input').value, 'answer');
-    await pc.setRemoteDescription({ type: 'answer', sdp: o.sdp });
-    setStatus(st, 'Connecting…');
-    setTimeout(() => { if (pc && !session && pc.connectionState !== 'connected') setStatus(st, 'Still trying… If this takes long, your networks may block direct connections.', true); }, 15000);
-  } catch (e) { setStatus(st, e.message, true); }
-}
-async function joinInvite() {
-  const st = $('#join-status');
-  $('#reply-card').hidden = true;
-  try {
-    const o = await unpackCode($('#join-input').value, 'offer');
-    setStatus(st, 'Creating reply…');
-    const conn = newPeerConnection();
-    conn.ondatachannel = (e) => attachChannelLater(e.channel);
-    await conn.setRemoteDescription({ type: 'offer', sdp: o.sdp });
-    await conn.setLocalDescription(await conn.createAnswer());
-    await waitForIce(conn);
-    if (conn !== pc) return;
-    $('#reply-code').value = await packCode({ t: 'answer', sdp: conn.localDescription.sdp });
-    $('#reply-card').hidden = false;
-    setStatus(st, 'Waiting for your friend to paste the reply…');
-  } catch (e) { setStatus(st, e.message, true); }
-}
 function goHome() {
-  closeConnection();
-  $('#hello').textContent = `Signed in as ${me.name}`;
-  $('#join-input').value = ''; $('#reply-card').hidden = true;
-  setStatus($('#join-status'), ''); setStatus($('#invite-status'), '');
+  endCall();
+  $('#hello').textContent = `Hi, ${me.name}`;
+  updateNetStatus();
+  renderContacts();
   show('v-home');
 }
 
 // ---------- wire up ----------
+let pendingJoin = null;
 $('#setup-btn').onclick = async () => {
   const name = $('#name-input').value.trim();
   if (!name) return $('#name-input').focus();
   $('#setup-btn').disabled = true;
   await createIdentity(name);
   goHome();
+  if (pendingJoin) startJoin(pendingJoin);
 };
 $('#name-input').onkeydown = (e) => { if (e.key === 'Enter') $('#setup-btn').click(); };
-$('#go-invite').onclick = startInvite;
-$('#go-join').onclick = () => show('v-join');
+$('#go-invite').onclick = showInvite;
 document.querySelectorAll('[data-home]').forEach((b) => (b.onclick = goHome));
-$('#invite-copy').onclick = (e) => copyText($('#invite-code').value, e.target);
-$('#invite-share').onclick = (e) => shareText($('#invite-code').value, e.target);
-$('#reply-copy').onclick = (e) => copyText($('#reply-code').value, e.target);
-$('#reply-share').onclick = (e) => shareText($('#reply-code').value, e.target);
-$('#reply-btn').onclick = acceptReply;
-$('#join-btn').onclick = joinInvite;
+$('#invite-copy').onclick = (e) => copyText($('#invite-link').textContent, e.target);
+$('#invite-share').onclick = async (e) => {
+  const url = $('#invite-link').textContent;
+  if (navigator.share) {
+    try { await navigator.share({ title: 'The Peer', text: `${me.name} invited you to chat privately on The Peer`, url }); } catch { /* cancelled */ }
+  } else copyText(url, e.target);
+};
 $('#leave-btn').onclick = goHome;
 $('#send-btn').onclick = () => {
   const text = $('#msg-input').value.trim();
@@ -557,21 +826,52 @@ $('#verify-close').onclick = () => $('#verify-dlg').close();
 $('#verify-ok').onclick = async () => {
   const s = session;
   $('#verify-dlg').close();
-  if (!s?.peer) return;
+  if (!s?.peer || !contacts[s.peer.id]) return;
   s.peer.verified = true;
-  const contacts = (await kvGet('contacts')) || {};
-  contacts[s.peer.id] = { ...contacts[s.peer.id], verified: true };
-  await kvSet('contacts', contacts);
-  updatePeerState(s);
+  contacts[s.peer.id].verified = true;
+  await saveContacts();
+  updateSecureState(s);
   addSystem(`You verified ${s.peer.name}.`);
 };
+window.addEventListener('hashchange', async () => {
+  const j = await acceptInviteFromUrl();
+  if (j && me) startJoin(j);
+});
+
+// Tell friends we're here, so they see us as online.
+setInterval(() => {
+  if (document.visibilityState !== 'visible') return;
+  for (const { room } of contactRooms()) room.send({ t: 'here' });
+  refreshPresence();
+}, PRESENCE_EVERY);
 
 (async () => {
-  if (!window.RTCPeerConnection || !crypto.subtle || !window.CompressionStream) {
+  if (!window.RTCPeerConnection || !crypto.subtle || !window.WebSocket) {
     document.body.innerHTML = '<p style="padding:24px">This browser is too old for The Peer. Please use a current version of Chrome, Edge, Firefox or Safari.</p>';
     return;
   }
-  if (await loadIdentity()) goHome(); else show('v-setup');
+  await loadState();
+  relay.start();
+  await Promise.all([
+    ...Object.values(contacts).map((c) => Room.open(c.secret, 'contact')),
+    ...Object.keys(invites).map((s) => Room.open(s, 'invite')),
+  ]);
+  for (const [id, c] of Object.entries(contacts)) roomsBySecret.get(c.secret).contactId = id;
+  for (const [s, j] of Object.entries(joins)) await Room.open(s, 'join', { from: j.from });
+
+  pendingJoin = await acceptInviteFromUrl();
+  if (!me) {
+    if (pendingJoin) {
+      $('#invited-banner').hidden = false;
+      $('#invited-by').textContent = pendingJoin.from;
+      $('#setup-intro').hidden = true;
+    }
+    show('v-setup');
+    $('#name-input').focus();
+    return;
+  }
+  goHome();
+  if (pendingJoin) startJoin(pendingJoin);
 })();
 </script>
 </body>
