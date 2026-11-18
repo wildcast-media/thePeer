@@ -20,4 +20,7 @@ Private, end-to-end encrypted chat that runs in any modern browser. No account, 
 - Your identity and contacts live in this browser. Clearing site data removes them.
 - Prototype: not security-audited.
 
+## Languages
+English and German. The app follows the device language and has a switch on the first screen and the home screen. All text lives in the `STRINGS` table in `index.html`, so adding a language means adding one more block there.
+
 The app is `index.html` plus `qrcode.js` (QR Code Generator by Kazuhiko Arase, MIT license). Serve them over HTTPS, for example with GitHub Pages.

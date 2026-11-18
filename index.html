@@ -33,6 +33,7 @@
   button:disabled { opacity: .5; cursor: default; }
   .row { display: flex; gap: 10px; flex-wrap: wrap; } .row > button { flex: 1; }
   .big { padding: 18px; font-size: 17px; }
+  .lang-btn { padding: 6px 10px; font-size: 13px; font-weight: 500; flex: none; margin-left: auto; align-self: flex-start; }
   .back { align-self: flex-start; padding: 6px 12px; font-size: 14px; }
   .net { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
   .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); flex: none; }
@@ -84,63 +85,63 @@
 
   <!-- First run: choose a display name -->
   <section id="v-setup" class="view">
-    <div class="brand"><div class="logo">P</div><h1>The Peer</h1></div>
+    <div class="brand"><div class="logo">P</div><div><h1>The Peer</h1></div><button class="lang-btn" data-lang-toggle></button></div>
     <div class="card invited" id="invited-banner" hidden>
-      <h2><span id="invited-by"></span> invited you to chat</h2>
-      <p>Pick a name and you'll be connected.</p>
+      <h2 id="invited-title"></h2>
+      <p data-i18n="invitedSub"></p>
     </div>
-    <p id="setup-intro">Private messaging that goes straight from your device to your friends'. No account, no phone number, no password.</p>
+    <p id="setup-intro" data-i18n="tagline"></p>
     <div class="card">
-      <h2>What should people call you?</h2>
-      <input id="name-input" type="text" maxlength="40" placeholder="Your name" autocomplete="off">
-      <button id="setup-btn" class="primary big">Continue</button>
+      <h2 data-i18n="askName"></h2>
+      <input id="name-input" type="text" maxlength="40" data-i18n-ph="namePh" autocomplete="off">
+      <button id="setup-btn" class="primary big" data-i18n="continue"></button>
     </div>
   </section>
 
   <!-- Home: contacts -->
   <section id="v-home" class="view">
-    <div class="brand"><div class="logo">P</div><div><h1>The Peer</h1><p id="hello"></p></div></div>
-    <div class="net"><span class="dot" id="net-dot"></span><span id="net-text">Connecting…</span></div>
-    <button id="go-invite" class="primary big">+ Invite a friend</button>
-    <div class="section-title">Your chats</div>
+    <div class="brand"><div class="logo">P</div><div><h1>The Peer</h1><p id="hello"></p></div><button class="lang-btn" data-lang-toggle></button></div>
+    <div class="net"><span class="dot" id="net-dot"></span><span id="net-text" data-i18n="connecting"></span></div>
+    <button id="go-invite" class="primary big" data-i18n="inviteBtn"></button>
+    <div class="section-title" data-i18n="yourChats"></div>
     <div id="contacts"></div>
   </section>
 
   <!-- Invite -->
   <section id="v-invite" class="view">
-    <button class="back" data-home>← Back</button>
-    <h2>Invite a friend</h2>
-    <p>Send this link to your friend through any app, or let them scan the code with their phone camera. The link works once and expires in 24 hours. Anyone who has it can connect to you, so send it only to them.</p>
-    <button id="invite-share" class="primary big">Share link</button>
+    <button class="back" data-home data-i18n="back"></button>
+    <h2 data-i18n="inviteTitle"></h2>
+    <p data-i18n="inviteText"></p>
+    <button id="invite-share" class="primary big" data-i18n="shareLink"></button>
     <div class="qr" id="invite-qr"></div>
     <div class="linkbox" id="invite-link"></div>
-    <button id="invite-copy">Copy link</button>
-    <div class="waiting"><span class="spinner"></span><span>Waiting for your friend to open the link. You can leave this screen; they'll show up in your chats when they join.</span></div>
+    <button id="invite-copy" data-i18n="copyLink"></button>
+    <div class="waiting"><span class="spinner"></span><span data-i18n="waitingInvite"></span></div>
   </section>
 
   <!-- Chat -->
   <section id="v-chat" class="view">
     <div class="chat-head">
-      <button id="leave-btn" aria-label="Back">←</button>
+      <button id="leave-btn" data-i18n-aria="backAria">←</button>
       <div class="avatar"><span id="peer-initial">?</span><span class="dot" id="peer-dot"></span></div>
       <div class="who"><b id="peer-name">…</b><span id="peer-state"></span></div>
-      <button id="verify-btn" disabled>Verify</button>
+      <button id="verify-btn" disabled data-i18n="verify"></button>
     </div>
     <div id="messages"></div>
     <div class="composer">
-      <textarea id="msg-input" rows="1" placeholder="Message" disabled></textarea>
-      <button id="send-btn" class="primary" disabled>Send</button>
+      <textarea id="msg-input" rows="1" data-i18n-ph="msgPh" disabled></textarea>
+      <button id="send-btn" class="primary" disabled data-i18n="send"></button>
     </div>
   </section>
 </div>
 
 <dialog id="verify-dlg">
-  <h2>Verify <span id="verify-name"></span></h2>
+  <h2 id="verify-title"></h2>
   <div class="safety" id="safety"></div>
-  <p style="font-size:14px">Compare these numbers with your friend in person or on a call. If they match on both screens, nobody is secretly intercepting your chat.</p>
+  <p style="font-size:14px" data-i18n="verifyText"></p>
   <div class="row" style="margin-top:16px">
-    <button id="verify-close">Close</button>
-    <button id="verify-ok" class="primary">They match</button>
+    <button id="verify-close" data-i18n="close"></button>
+    <button id="verify-ok" class="primary" data-i18n="theyMatch"></button>
   </div>
 </dialog>
 
@@ -181,6 +182,115 @@ const INVITE_TTL = 24 * 3600 * 1000; // invite links expire after 24 hours
 const PRESENCE_EVERY = 8000;
 const ONLINE_WINDOW = 20000;
 
+// ---------- languages ----------
+const STRINGS = {
+  en: {
+    switchTo: '🌐 Deutsch',
+    tagline: "Private messaging that goes straight from your device to your friends'. No account, no phone number, no password.",
+    invitedTitle: '{name} invited you to chat',
+    invitedSub: "Pick a name and you'll be connected.",
+    askName: 'What should people call you?', namePh: 'Your name', continue: 'Continue',
+    connecting: 'Connecting…', ready: 'Ready', offlineNet: 'Offline. Check your internet connection.',
+    inviteBtn: '+ Invite a friend', yourChats: 'Your chats', hi: 'Hi, {name}',
+    noChats: 'No chats yet.<br>Tap <b>Invite a friend</b> to get started.',
+    online: 'Online', offline: 'Offline', pendingInvite: 'Invitation, waiting to connect',
+    back: '← Back', backAria: 'Back', inviteTitle: 'Invite a friend',
+    inviteText: 'Send this link to your friend through any app, or let them scan the code with their phone camera. The link works once and expires in 24 hours. Anyone who has it can connect to you, so send it only to them.',
+    shareLink: 'Share link', copyLink: 'Copy link', copied: 'Copied!',
+    shareText: '{name} invited you to chat privately on The Peer',
+    waitingInvite: "Waiting for your friend to open the link. You can leave this screen; they'll show up in your chats when they join.",
+    verify: 'Verify', msgPh: 'Message', send: 'Send',
+    verifyTitle: 'Verify {name}',
+    verifyText: 'Compare these numbers with your friend in person or on a call. If they match on both screens, nobody is secretly intercepting your chat.',
+    close: 'Close', theyMatch: 'They match',
+    friend: 'Friend', newContact: 'New contact',
+    waitingFor: 'Waiting for {name} to open The Peer…',
+    stillWaiting: 'Still waiting. {name} needs to have The Peer open. If this link was already used or is more than 24 hours old, it no longer works: ask them for a new one.',
+    expired: 'This invite link has expired. Ask your friend for a new one.',
+    couldntConnect: "Couldn't connect. It will retry automatically while you both have the app open.",
+    disconnectedMsg: 'Disconnected. Go back and tap the chat to reconnect.', disconnected: 'Disconnected',
+    securing: 'Securing connection…',
+    encVerified: '🔒 Encrypted · Verified', encNotVerified: '🔒 Encrypted · Not verified yet',
+    connectedNew: "Connected to {name}. They're saved in your chats now. Tap Verify to make sure it's really them.",
+    connected: 'Connected to {name}. Messages are end-to-end encrypted.',
+    youVerified: 'You verified {name}.',
+    securityProblem: 'Security problem: {msg} The chat was closed.',
+    errUnexpected: 'Unexpected data from the other device.',
+    errSig: "The other device's identity signature is invalid.",
+    errSelf: 'You opened your own invite link. Send it to a friend instead.',
+    errWrongDevice: 'This device is not the {name} you saved.',
+    errReplay: 'A replayed or out-of-order message was rejected.',
+    oldBrowser: 'This browser is too old for The Peer. Please use a current version of Chrome, Edge, Firefox or Safari.',
+  },
+  de: {
+    switchTo: '🌐 English',
+    tagline: 'Private Nachrichten, die direkt von deinem Gerät zu deinen Freunden gehen. Kein Konto, keine Telefonnummer, kein Passwort.',
+    invitedTitle: '{name} hat dich zum Chatten eingeladen',
+    invitedSub: 'Wähle einen Namen und schon seid ihr verbunden.',
+    askName: 'Wie sollen andere dich nennen?', namePh: 'Dein Name', continue: 'Weiter',
+    connecting: 'Verbinde…', ready: 'Bereit', offlineNet: 'Offline. Prüfe deine Internetverbindung.',
+    inviteBtn: '+ Freunde einladen', yourChats: 'Deine Chats', hi: 'Hallo, {name}',
+    noChats: 'Noch keine Chats.<br>Tippe auf <b>Freunde einladen</b>, um loszulegen.',
+    online: 'Online', offline: 'Offline', pendingInvite: 'Einladung, wartet auf Verbindung',
+    back: '← Zurück', backAria: 'Zurück', inviteTitle: 'Freunde einladen',
+    inviteText: 'Schick diesen Link über eine beliebige App oder lass den Code mit der Handykamera scannen. Der Link funktioniert nur einmal und läuft nach 24 Stunden ab. Wer ihn hat, kann sich mit dir verbinden – schick ihn also nur an die richtige Person.',
+    shareLink: 'Link teilen', copyLink: 'Link kopieren', copied: 'Kopiert!',
+    shareText: '{name} lädt dich zu einem privaten Chat auf The Peer ein',
+    waitingInvite: 'Warte darauf, dass der Link geöffnet wird. Du kannst diese Seite verlassen – sobald die Person beitritt, erscheint sie in deinen Chats.',
+    verify: 'Verifizieren', msgPh: 'Nachricht', send: 'Senden',
+    verifyTitle: '{name} verifizieren',
+    verifyText: 'Vergleiche diese Zahlen persönlich oder bei einem Anruf. Wenn sie auf beiden Bildschirmen übereinstimmen, liest niemand heimlich mit.',
+    close: 'Schließen', theyMatch: 'Stimmen überein',
+    friend: 'Kontakt', newContact: 'Neuer Kontakt',
+    waitingFor: 'Warte, bis {name} The Peer öffnet…',
+    stillWaiting: 'Immer noch am Warten. {name} muss The Peer geöffnet haben. Wenn dieser Link schon benutzt wurde oder älter als 24 Stunden ist, funktioniert er nicht mehr – bitte um einen neuen.',
+    expired: 'Dieser Einladungslink ist abgelaufen. Bitte um einen neuen.',
+    couldntConnect: 'Verbindung fehlgeschlagen. Es wird automatisch erneut versucht, solange ihr beide die App geöffnet habt.',
+    disconnectedMsg: 'Verbindung getrennt. Geh zurück und tippe auf den Chat, um dich neu zu verbinden.', disconnected: 'Getrennt',
+    securing: 'Verbindung wird gesichert…',
+    encVerified: '🔒 Verschlüsselt · Verifiziert', encNotVerified: '🔒 Verschlüsselt · Noch nicht verifiziert',
+    connectedNew: 'Verbunden mit {name}. Der Kontakt ist jetzt in deinen Chats gespeichert. Tippe auf „Verifizieren“, um sicherzugehen, dass es wirklich {name} ist.',
+    connected: 'Verbunden mit {name}. Nachrichten sind Ende-zu-Ende-verschlüsselt.',
+    youVerified: 'Du hast {name} verifiziert.',
+    securityProblem: 'Sicherheitsproblem: {msg} Der Chat wurde geschlossen.',
+    errUnexpected: 'Unerwartete Daten vom anderen Gerät.',
+    errSig: 'Die Identitätssignatur des anderen Geräts ist ungültig.',
+    errSelf: 'Du hast deinen eigenen Einladungslink geöffnet. Schick ihn stattdessen an jemand anderen.',
+    errWrongDevice: 'Dieses Gerät gehört nicht zu dem gespeicherten Kontakt {name}.',
+    errReplay: 'Eine wiederholte oder falsch sortierte Nachricht wurde abgelehnt.',
+    oldBrowser: 'Dieser Browser ist zu alt für The Peer. Bitte nutze eine aktuelle Version von Chrome, Edge, Firefox oder Safari.',
+  },
+};
+// German if the device prefers German, English otherwise; the user's own choice wins.
+function detectLang() {
+  const saved = localStorage.getItem('thepeer.lang');
+  if (STRINGS[saved]) return saved;
+  for (const l of navigator.languages || [navigator.language]) {
+    const code = String(l).slice(0, 2).toLowerCase();
+    if (STRINGS[code]) return code;
+  }
+  return 'en';
+}
+let lang = detectLang();
+function t(key, vars = {}) {
+  const str = STRINGS[lang][key] ?? STRINGS.en[key] ?? key;
+  return str.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '');
+}
+function applyLanguage() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach((el) => (el.textContent = t(el.dataset.i18n)));
+  document.querySelectorAll('[data-i18n-ph]').forEach((el) => (el.placeholder = t(el.dataset.i18nPh)));
+  document.querySelectorAll('[data-i18n-aria]').forEach((el) => el.setAttribute('aria-label', t(el.dataset.i18nAria)));
+  document.querySelectorAll('[data-lang-toggle]').forEach((el) => (el.textContent = t('switchTo')));
+}
+function switchLanguage() {
+  lang = lang === 'de' ? 'en' : 'de';
+  localStorage.setItem('thepeer.lang', lang);
+  applyLanguage();
+  if (pendingJoin) $('#invited-title').textContent = t('invitedTitle', { name: pendingJoin.from });
+  if (me && currentView === 'v-home') goHome();
+}
+
 // ---------- small helpers ----------
 const b64u = {
   enc(bytes) {
@@ -213,10 +323,10 @@ function show(id) {
 }
 async function copyText(text, btn) {
   try { await navigator.clipboard.writeText(text); }
-  catch { const t = document.createElement('textarea'); t.value = text; document.body.append(t); t.select(); document.execCommand('copy'); t.remove(); }
-  const old = btn.textContent; btn.textContent = 'Copied!'; setTimeout(() => (btn.textContent = old), 1500);
+  catch { const ta = document.createElement('textarea'); ta.value = text; document.body.append(ta); ta.select(); document.execCommand('copy'); ta.remove(); }
+  const old = btn.textContent; btn.textContent = t('copied'); setTimeout(() => (btn.textContent = old), 1500);
 }
-const cleanName = (n) => String(n || '').trim().slice(0, 40) || 'Friend';
+const cleanName = (n) => String(n || '').trim().slice(0, 40) || t('friend');
 
 // ---------- tiny IndexedDB key-value store ----------
 let dbPromise;
@@ -271,7 +381,7 @@ function expireInvites() {
       delete store[k];
       const room = roomsBySecret.get(k);
       if (room) {
-        if (call?.room === room && !session) connectionLost(call, 'This invite link has expired. Ask your friend for a new one.');
+        if (call?.room === room && !session) connectionLost(call, t('expired'));
         room.close();
       }
     }
@@ -391,9 +501,9 @@ class Room {
   }
   close() { relay.remove(this); roomsBySecret.delete(this.secret); }
   label() {
-    if (this.kind === 'contact') return contacts[this.contactId]?.name || 'Friend';
-    if (this.kind === 'join') return this.from || 'Friend';
-    return 'your friend';
+    if (this.kind === 'contact') return contacts[this.contactId]?.name || t('friend');
+    if (this.kind === 'join') return this.from || t('friend');
+    return t('newContact');
   }
   online() { return Date.now() - this.lastSeen < ONLINE_WINDOW; }
   async send(msg) {
@@ -470,7 +580,7 @@ function dial(room) {
   endCall();
   const c = call = { room, role: 'dialer' };
   openChat(room);
-  setPeerState(room.online() ? 'Connecting…' : `Waiting for ${room.label()} to open The Peer…`);
+  setPeerState(room.online() ? t('connecting') : t('waitingFor', { name: room.label() }));
   startKnocking(c);
 }
 function startKnocking(c) {
@@ -480,7 +590,7 @@ function startKnocking(c) {
     c.room.send({ t: 'knock' });
     if (c.room.kind === 'join' && !c.warned && Date.now() - started > 60000) {
       c.warned = true;
-      addSystem(`Still waiting. ${c.room.label()} needs to have The Peer open. If this link was already used or is more than 24 hours old, it no longer works: ask them for a new one.`);
+      addSystem(t('stillWaiting', { name: c.room.label() }));
     }
   };
   knock();
@@ -492,7 +602,7 @@ async function startOffer(room, peer) {
   endCall();
   const c = call = { room, role: 'offerer', peer };
   openChat(room);
-  setPeerState('Connecting…');
+  setPeerState(t('connecting'));
   c.pc = makePeerConnection(c);
   watchChannel(c, c.pc.createDataChannel('chat', { ordered: true }));
   await c.pc.setLocalDescription(await c.pc.createOffer());
@@ -500,7 +610,7 @@ async function startOffer(room, peer) {
   if (call !== c) return;
   room.send({ t: 'offer', to: peer, sdp: c.pc.localDescription.sdp });
   c.timer = setTimeout(() => {
-    if (call === c && !session?.ready) connectionLost(c, "Couldn't connect. It will retry automatically while you both have the app open.");
+    if (call === c && !session?.ready) connectionLost(c, t('couldntConnect'));
   }, 25000);
 }
 
@@ -530,12 +640,12 @@ function endCall() {
   try { c.pc?.close(); } catch {}
 }
 
-function connectionLost(c, text = 'Disconnected. Go back and tap the chat to reconnect.') {
+function connectionLost(c, text = t('disconnectedMsg')) {
   if (call !== c) return;
   endCall();
   addSystem(text, true);
   setChatEnabled(false);
-  setPeerState('Disconnected');
+  setPeerState(t('disconnected'));
 }
 
 // ---------- encrypted session over the direct link ----------
@@ -548,7 +658,7 @@ function attachChannel(c, channel) {
   s.helloSent = sendHello(s);
   channel.onmessage = (e) => { s.queue = s.queue.then(() => onData(s, e.data)).catch((err) => fail(s, err)); };
   channel.onclose = () => { if (session === s) connectionLost(c); };
-  setPeerState('Securing connection…');
+  setPeerState(t('securing'));
 }
 
 async function sendHello(s) {
@@ -564,7 +674,7 @@ async function onData(s, raw) {
   const m = JSON.parse(raw);
   if (m.t === 'hello' && !s.ready) return onHello(s, m);
   if (m.t === 'msg' && s.ready) return onMessage(s, m);
-  throw new Error('Unexpected data from the other device.');
+  throw new Error(t('errUnexpected'));
 }
 
 async function onHello(s, h) {
@@ -572,13 +682,13 @@ async function onHello(s, h) {
   const peerId = b64u.dec(h.id), peerEph = b64u.dec(h.eph);
   const idKey = await crypto.subtle.importKey('raw', peerId, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['verify']);
   const ok = await crypto.subtle.verify({ name: 'ECDSA', hash: 'SHA-256' }, idKey, b64u.dec(h.sig), concat(HELLO_LABEL, peerEph));
-  if (!ok) throw new Error("The other device's identity signature is invalid.");
-  if (compareBytes(peerId, me.pubRaw) === 0) throw new Error('You opened your own invite link. Send it to a friend instead.');
+  if (!ok) throw new Error(t('errSig'));
+  if (compareBytes(peerId, me.pubRaw) === 0) throw new Error(t('errSelf'));
 
   const idStr = b64u.enc(peerId);
   const room = s.call.room;
   if (room.kind === 'contact' && room.contactId !== idStr) {
-    throw new Error(`This device is not the ${room.label()} you saved.`);
+    throw new Error(t('errWrongDevice', { name: room.label() }));
   }
 
   // ECDH -> HKDF -> one AES-GCM key per direction.
@@ -627,7 +737,7 @@ async function onHello(s, h) {
 }
 
 async function onMessage(s, m) {
-  if (!Number.isInteger(m.n) || m.n <= s.recvCounter) throw new Error('A replayed or out-of-order message was rejected.');
+  if (!Number.isInteger(m.n) || m.n <= s.recvCounter) throw new Error(t('errReplay'));
   const iv = new Uint8Array(12);
   new DataView(iv.buffer).setUint32(8, m.n);
   const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, s.recvKey, b64u.dec(m.c));
@@ -651,7 +761,7 @@ async function sendMessage(text) {
 function fail(s, err) {
   if (session !== s) return;
   console.error(err);
-  connectionLost(s.call, 'Security problem: ' + err.message + ' The chat was closed.');
+  connectionLost(s.call, t('securityProblem', { msg: err.message }));
 }
 
 // ---------- invites ----------
@@ -700,7 +810,7 @@ async function startJoin(j) {
 function updateNetStatus() {
   const up = relay.upCount();
   $('#net-dot').className = 'dot ' + (up ? 'on' : 'bad');
-  $('#net-text').textContent = up ? 'Ready' : 'Offline. Check your internet connection.';
+  $('#net-text').textContent = up ? t('ready') : t('offlineNet');
 }
 
 function contactRooms() {
@@ -718,7 +828,7 @@ function renderContacts() {
   const list = contactRooms().sort((x, y) => (y.room.online() - x.room.online()) || (y.c.lastSeen - x.c.lastSeen));
   const pending = Object.entries(joins);
   if (!list.length && !pending.length) {
-    box.innerHTML = '<div class="empty">No chats yet.<br>Tap <b>Invite a friend</b> to get started.</div>';
+    box.innerHTML = `<div class="empty">${t('noChats')}</div>`; // fixed text from STRINGS, never user input
     return;
   }
   for (const { c, room } of list) {
@@ -729,7 +839,7 @@ function renderContacts() {
     const dot = document.createElement('span'); dot.className = 'dot' + (room.online() ? ' on' : ''); av.append(dot);
     const who = document.createElement('div'); who.className = 'who';
     const b = document.createElement('b'); b.textContent = c.name + (c.verified ? ' ✓' : '');
-    const sp = document.createElement('span'); sp.textContent = room.online() ? 'Online' : 'Offline';
+    const sp = document.createElement('span'); sp.textContent = room.online() ? t('online') : t('offline');
     who.append(b, sp);
     btn.append(av, who);
     btn.onclick = () => dial(room);
@@ -740,7 +850,7 @@ function renderContacts() {
     btn.className = 'contact';
     const who = document.createElement('div'); who.className = 'who';
     const b = document.createElement('b'); b.textContent = j.from;
-    const sp = document.createElement('span'); sp.textContent = 'Invitation, waiting to connect';
+    const sp = document.createElement('span'); sp.textContent = t('pendingInvite');
     who.append(b, sp);
     btn.append(who);
     btn.onclick = () => startJoin({ secret, from: j.from });
@@ -764,8 +874,8 @@ function setChatEnabled(on) {
   if (on) $('#msg-input').focus();
 }
 function updateSecureState(s) {
-  if (s.peer.verified || contacts[s.peer.id]?.verified) setPeerState('🔒 Encrypted · Verified', 'ok');
-  else setPeerState('🔒 Encrypted · Not verified yet', 'warn');
+  if (s.peer.verified || contacts[s.peer.id]?.verified) setPeerState(t('encVerified'), 'ok');
+  else setPeerState(t('encNotVerified'), 'warn');
 }
 function onSecure(s, isNew) {
   $('#peer-name').textContent = s.peer.name;
@@ -774,8 +884,8 @@ function onSecure(s, isNew) {
   $('#verify-btn').disabled = false;
   updateSecureState(s);
   addSystem(isNew
-    ? `Connected to ${s.peer.name}. They're saved in your chats now. Tap Verify to make sure it's really them.`
-    : `Connected to ${s.peer.name}. Messages are end-to-end encrypted.`);
+    ? t('connectedNew', { name: s.peer.name })
+    : t('connected', { name: s.peer.name }));
   setChatEnabled(true);
 }
 function addMessage(text, who, ts) {
@@ -783,9 +893,9 @@ function addMessage(text, who, ts) {
   const div = document.createElement('div');
   div.className = 'msg ' + who;
   div.textContent = text;
-  const t = document.createElement('time');
-  t.textContent = new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  div.append(t);
+  const tm = document.createElement('time');
+  tm.textContent = new Date(ts).toLocaleTimeString(lang, { hour: '2-digit', minute: '2-digit' });
+  div.append(tm);
   box.append(div);
   box.scrollTop = box.scrollHeight;
 }
@@ -798,7 +908,7 @@ function addSystem(text, isErr = false) {
 }
 function goHome() {
   endCall();
-  $('#hello').textContent = `Hi, ${me.name}`;
+  $('#hello').textContent = t('hi', { name: me.name });
   updateNetStatus();
   renderContacts();
   show('v-home');
@@ -816,12 +926,14 @@ $('#setup-btn').onclick = async () => {
 };
 $('#name-input').onkeydown = (e) => { if (e.key === 'Enter') $('#setup-btn').click(); };
 $('#go-invite').onclick = showInvite;
+document.querySelectorAll('[data-lang-toggle]').forEach((b) => (b.onclick = switchLanguage));
+applyLanguage();
 document.querySelectorAll('[data-home]').forEach((b) => (b.onclick = goHome));
 $('#invite-copy').onclick = (e) => copyText($('#invite-link').textContent, e.target);
 $('#invite-share').onclick = async (e) => {
   const url = $('#invite-link').textContent;
   if (navigator.share) {
-    try { await navigator.share({ title: 'The Peer', text: `${me.name} invited you to chat privately on The Peer`, url }); } catch { /* cancelled */ }
+    try { await navigator.share({ title: 'The Peer', text: t('shareText', { name: me.name }), url }); } catch { /* cancelled */ }
   } else copyText(url, e.target);
 };
 $('#leave-btn').onclick = goHome;
@@ -836,7 +948,7 @@ $('#msg-input').onkeydown = (e) => {
 };
 $('#verify-btn').onclick = () => {
   if (!session?.safety) return;
-  $('#verify-name').textContent = session.peer.name;
+  $('#verify-title').textContent = t('verifyTitle', { name: session.peer.name });
   $('#safety').innerHTML = '';
   for (const g of session.safety) { const d = document.createElement('div'); d.textContent = g; $('#safety').append(d); }
   $('#verify-dlg').showModal();
@@ -850,7 +962,7 @@ $('#verify-ok').onclick = async () => {
   contacts[s.peer.id].verified = true;
   await saveContacts();
   updateSecureState(s);
-  addSystem(`You verified ${s.peer.name}.`);
+  addSystem(t('youVerified', { name: s.peer.name }));
 };
 window.addEventListener('hashchange', async () => {
   const j = await acceptInviteFromUrl();
@@ -867,7 +979,7 @@ setInterval(() => {
 
 (async () => {
   if (!window.RTCPeerConnection || !crypto.subtle || !window.WebSocket) {
-    document.body.innerHTML = '<p style="padding:24px">This browser is too old for The Peer. Please use a current version of Chrome, Edge, Firefox or Safari.</p>';
+    document.body.innerHTML = `<p style="padding:24px">${t('oldBrowser')}</p>`;
     return;
   }
   await loadState();
@@ -883,7 +995,7 @@ setInterval(() => {
   if (!me) {
     if (pendingJoin) {
       $('#invited-banner').hidden = false;
-      $('#invited-by').textContent = pendingJoin.from;
+      $('#invited-title').textContent = t('invitedTitle', { name: pendingJoin.from });
       $('#setup-intro').hidden = true;
     }
     show('v-setup');
