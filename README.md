@@ -10,7 +10,7 @@ Private, end-to-end encrypted chat that runs in any modern browser. No account, 
 
 ## How it works
 - **Finding each other:** every pair of friends shares a random secret. It starts in the invite link's `#fragment`, which browsers never send to the web host. Both devices derive a topic and an encryption key from it and use free public MQTT relays only to announce "I'm here" and to swap WebRTC connection details. The relays see only encrypted data.
-- **One-time links:** after the first connection, both devices move to a new private room derived from their key exchange, so a used invite link stops working.
+- **One-time links that expire in 24 hours:** an unused invite link stops working after 24 hours. After the first connection, both devices move to a new private room derived from their key exchange, so a used invite link stops working.
 - **Messages** go directly between the two devices over WebRTC. On top of WebRTC's own encryption, each session does a signed ECDH key exchange and uses AES-256-GCM with per-direction keys and numbered messages (replays are rejected).
 - **Identity:** each device has a key that never leaves it. A saved contact must always present the same key, and you can compare safety numbers to verify a contact.
 

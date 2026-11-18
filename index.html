@@ -110,7 +110,7 @@
   <section id="v-invite" class="view">
     <button class="back" data-home>← Back</button>
     <h2>Invite a friend</h2>
-    <p>Send this link to your friend through any app, or let them scan the code with their phone camera. Anyone with the link can connect to you once, so send it only to them.</p>
+    <p>Send this link to your friend through any app, or let them scan the code with their phone camera. The link works once and expires in 24 hours. Anyone who has it can connect to you, so send it only to them.</p>
     <button id="invite-share" class="primary big">Share link</button>
     <div class="qr" id="invite-qr"></div>
     <div class="linkbox" id="invite-link"></div>
@@ -177,7 +177,7 @@ const DEFAULT_RELAYS = [
 ];
 // Developers can point at their own relay for testing: localStorage['thepeer.relays'] = '["ws://localhost:8888"]'
 const RELAYS = JSON.parse(localStorage.getItem('thepeer.relays') || 'null') || DEFAULT_RELAYS;
-const INVITE_TTL = 14 * 24 * 3600 * 1000;
+const INVITE_TTL = 24 * 3600 * 1000; // invite links expire after 24 hours
 const PRESENCE_EVERY = 8000;
 const ONLINE_WINDOW = 20000;
 
@@ -262,6 +262,23 @@ async function loadState() {
   if (saved) me = { ...saved, pubRaw: new Uint8Array(await crypto.subtle.exportKey('raw', saved.keys.publicKey)) };
 }
 const saveContacts = () => kvSet('contacts', contacts);
+const isExpired = (v) => Date.now() - v.created >= INVITE_TTL;
+function expireInvites() {
+  let changed = false;
+  for (const [store, save] of [[invites, saveInvites], [joins, saveJoins]]) {
+    const gone = Object.keys(store).filter((k) => isExpired(store[k]));
+    for (const k of gone) {
+      delete store[k];
+      const room = roomsBySecret.get(k);
+      if (room) {
+        if (call?.room === room && !session) connectionLost(call, 'This invite link has expired. Ask your friend for a new one.');
+        room.close();
+      }
+    }
+    if (gone.length) { save(); changed = true; }
+  }
+  if (changed && currentView === 'v-home') renderContacts();
+}
 const saveInvites = () => kvSet('invites', invites);
 const saveJoins = () => kvSet('joins', joins);
 
@@ -409,6 +426,7 @@ let session = null;
 
 async function onRoomMessage(room, m) {
   if (m.t === 'knock') {
+    if (room.kind === 'invite' && (!invites[room.secret] || isExpired(invites[room.secret]))) return expireInvites();
     if (call?.room === room) {
       // Both sides dialed at once: the lower id makes the offer.
       if (call.role === 'dialer' && !call.pc && MY_PEER < m.from) startOffer(room, m.from);
@@ -462,7 +480,7 @@ function startKnocking(c) {
     c.room.send({ t: 'knock' });
     if (c.room.kind === 'join' && !c.warned && Date.now() - started > 60000) {
       c.warned = true;
-      addSystem(`Still waiting. ${c.room.label()} needs to have The Peer open. If they already connected with this link before, it no longer works: ask them for a new one.`);
+      addSystem(`Still waiting. ${c.room.label()} needs to have The Peer open. If this link was already used or is more than 24 hours old, it no longer works: ask them for a new one.`);
     }
   };
   knock();
@@ -643,6 +661,7 @@ function inviteLink(secret) {
 let shownInvite = null;
 async function showInvite() {
   // Reuse an unused invite so the link doesn't change every time.
+  expireInvites();
   let secret = Object.keys(invites).sort((x, y) => invites[y].created - invites[x].created)[0];
   if (!secret) {
     secret = b64u.enc(randomBytes(16));
@@ -841,6 +860,7 @@ window.addEventListener('hashchange', async () => {
 // Tell friends we're here, so they see us as online.
 setInterval(() => {
   if (document.visibilityState !== 'visible') return;
+  expireInvites();
   for (const { room } of contactRooms()) room.send({ t: 'here' });
   refreshPresence();
 }, PRESENCE_EVERY);
