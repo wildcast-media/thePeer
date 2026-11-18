@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1419">
+<title>PeerChat</title>
+<style>
+  :root {
+    --bg: #0f1419; --panel: #182029; --panel2: #212b36; --line: #2c3845;
+    --text: #e6edf3; --muted: #8b98a5; --accent: #3fb68b; --accent-ink: #062b1d;
+    --mine: #1f6f55; --theirs: #263241; --danger: #e5534b; --warn: #d4a72c;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+    font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  #app { max-width: 640px; margin: 0 auto; height: 100%; display: flex; flex-direction: column; }
+  .view { display: none; flex: 1; flex-direction: column; padding: 24px 20px; gap: 16px; overflow-y: auto; }
+  .view.active { display: flex; }
+  h1 { margin: 0; font-size: 28px; } h2 { margin: 0; font-size: 20px; }
+  p { margin: 0; color: var(--muted); }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .logo { width: 40px; height: 40px; border-radius: 12px; background: var(--accent); display: grid; place-items: center; color: var(--accent-ink); font-weight: 800; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+  input[type=text], textarea { width: 100%; background: var(--panel2); color: var(--text); border: 1px solid var(--line);
+    border-radius: 12px; padding: 12px 14px; font: inherit; outline: none; }
+  input[type=text]:focus, textarea:focus { border-color: var(--accent); }
+  textarea.code { font: 12px/1.4 ui-monospace, Menlo, Consolas, monospace; min-height: 110px; resize: vertical; word-break: break-all; }
+  button { font: inherit; font-weight: 600; border: 0; border-radius: 12px; padding: 12px 16px; cursor: pointer;
+    background: var(--panel2); color: var(--text); border: 1px solid var(--line); }
+  button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  button:disabled { opacity: .5; cursor: default; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; } .row > button { flex: 1; }
+  .big { padding: 18px; font-size: 17px; text-align: left; display: flex; flex-direction: column; gap: 2px; }
+  .big small { font-weight: 400; color: inherit; opacity: .75; }
+  .step { display: flex; gap: 10px; align-items: baseline; }
+  .num { flex: none; width: 24px; height: 24px; border-radius: 50%; background: var(--panel2); display: grid; place-items: center; font-size: 13px; font-weight: 700; }
+  .status { font-size: 14px; color: var(--muted); min-height: 1.4em; }
+  .status.err { color: var(--danger); }
+  label.check { display: flex; gap: 8px; align-items: center; font-size: 14px; color: var(--muted); }
+  .back { align-self: flex-start; padding: 6px 12px; font-size: 14px; }
+
+  /* chat */
+  #v-chat { padding: 0; gap: 0; }
+  .chat-head { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--panel); border-bottom: 1px solid var(--line); }
+  .avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--panel2); display: grid; place-items: center; font-weight: 700; }
+  .who { flex: 1; min-width: 0; } .who b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .who span { font-size: 13px; color: var(--muted); }
+  .who span.ok { color: var(--accent); } .who span.warn { color: var(--warn); }
+  .chat-head button { padding: 8px 12px; font-size: 14px; }
+  #messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 6px; }
+  .msg { max-width: 80%; padding: 8px 12px; border-radius: 16px; white-space: pre-wrap; word-wrap: break-word; }
+  .msg.me { align-self: flex-end; background: var(--mine); border-bottom-right-radius: 4px; }
+  .msg.them { align-self: flex-start; background: var(--theirs); border-bottom-left-radius: 4px; }
+  .msg time { display: block; font-size: 11px; opacity: .6; text-align: right; margin-top: 2px; }
+  .sys { align-self: center; font-size: 13px; color: var(--muted); background: var(--panel); padding: 6px 12px; border-radius: 10px; text-align: center; }
+  .sys.err { color: var(--danger); }
+  .composer { display: flex; gap: 8px; padding: 12px; padding-bottom: max(12px, env(safe-area-inset-bottom)); background: var(--panel); border-top: 1px solid var(--line); }
+  .composer textarea { min-height: 46px; max-height: 140px; resize: none; }
+
+  dialog { background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 16px; max-width: 380px; width: calc(100% - 32px); padding: 20px; }
+  dialog::backdrop { background: rgba(0,0,0,.6); }
+  .safety { font: 22px/1.6 ui-monospace, Menlo, Consolas, monospace; letter-spacing: 1px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px 12px; text-align: center; background: var(--panel2); border-radius: 12px; padding: 14px; margin: 14px 0; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- First run: choose a display name -->
+  <section id="v-setup" class="view">
+    <div class="brand"><div class="logo">P</div><h1>PeerChat</h1></div>
+    <p>Private messaging that goes straight from your device to theirs. No accounts, no phone number, and no server that stores your messages.</p>
+    <div class="card">
+      <h2>What should people call you?</h2>
+      <input id="name-input" type="text" maxlength="40" placeholder="Your name" autocomplete="off">
+      <button id="setup-btn" class="primary">Continue</button>
+      <p style="font-size:14px">A secret key that proves who you are is created on this device and never leaves it.</p>
+    </div>
+  </section>
+
+  <!-- Home -->
+  <section id="v-home" class="view">
+    <div class="brand"><div class="logo">P</div><div><h1>PeerChat</h1><p id="hello"></p></div></div>
+    <button id="go-invite" class="primary big">Start a chat<small>Create an invite to send to a friend</small></button>
+    <button id="go-join" class="big">Join a chat<small>Paste an invite a friend sent you</small></button>
+    <label class="check"><input id="stun" type="checkbox" checked> Help connect across different networks (uses a public address-lookup service; it never sees your messages)</label>
+  </section>
+
+  <!-- Inviter -->
+  <section id="v-invite" class="view">
+    <button class="back" data-home>← Back</button>
+    <h2>Start a chat</h2>
+    <div class="card">
+      <div class="step"><span class="num">1</span><p>Send this invite to your friend, through any app.</p></div>
+      <textarea id="invite-code" class="code" readonly placeholder="Creating invite…"></textarea>
+      <div class="row"><button id="invite-copy" disabled>Copy</button><button id="invite-share" disabled>Share…</button></div>
+    </div>
+    <div class="card">
+      <div class="step"><span class="num">2</span><p>Paste the reply they send back.</p></div>
+      <textarea id="reply-input" class="code" placeholder="Paste reply here"></textarea>
+      <button id="reply-btn" class="primary">Connect</button>
+    </div>
+    <div id="invite-status" class="status"></div>
+  </section>
+
+  <!-- Joiner -->
+  <section id="v-join" class="view">
+    <button class="back" data-home>← Back</button>
+    <h2>Join a chat</h2>
+    <div class="card">
+      <div class="step"><span class="num">1</span><p>Paste the invite your friend sent you.</p></div>
+      <textarea id="join-input" class="code" placeholder="Paste invite here"></textarea>
+      <button id="join-btn" class="primary">Create reply</button>
+    </div>
+    <div class="card" id="reply-card" hidden>
+      <div class="step"><span class="num">2</span><p>Send this reply back to your friend. The chat opens once they paste it.</p></div>
+      <textarea id="reply-code" class="code" readonly></textarea>
+      <div class="row"><button id="reply-copy">Copy</button><button id="reply-share">Share…</button></div>
+    </div>
+    <div id="join-status" class="status"></div>
+  </section>
+
+  <!-- Chat -->
+  <section id="v-chat" class="view">
+    <div class="chat-head">
+      <div class="avatar" id="peer-initial">?</div>
+      <div class="who"><b id="peer-name">…</b><span id="peer-state">Securing connection…</span></div>
+      <button id="verify-btn" disabled>Verify</button>
+      <button id="leave-btn">Leave</button>
+    </div>
+    <div id="messages"></div>
+    <div class="composer">
+      <textarea id="msg-input" rows="1" placeholder="Message" disabled></textarea>
+      <button id="send-btn" class="primary" disabled>Send</button>
+    </div>
+  </section>
+</div>
+
+<dialog id="verify-dlg">
+  <h2>Verify <span id="verify-name"></span></h2>
+  <div class="safety" id="safety"></div>
+  <p style="font-size:14px">Compare these numbers with your friend in person or on a call. If they match on both screens, nobody is secretly intercepting your chat.</p>
+  <div class="row" style="margin-top:16px">
+    <button id="verify-close">Close</button>
+    <button id="verify-ok" class="primary">They match</button>
+  </div>
+</dialog>
+
+<script>
+'use strict';
+/*
+ * PeerChat: serverless, end-to-end encrypted chat over WebRTC.
+ *
+ * Connection: the two devices swap an "invite" and a "reply" code through any
+ * channel they like. Those codes hold the WebRTC connection details, including
+ * the DTLS certificate fingerprints, so the direct link is authenticated by the
+ * code exchange itself.
+ *
+ * On top of WebRTC's own encryption, each device has a long-term identity key
+ * (ECDSA P-256, private half non-extractable, kept in IndexedDB). Every session
+ * does a fresh signed ECDH exchange, derives one AES-256-GCM key per direction
+ * with HKDF, and numbers every message so replayed or reordered messages are
+ * rejected. Users can compare a safety number derived from both identity keys.
+ */
+
+const $ = (s) => document.querySelector(s);
+const enc = new TextEncoder();
+const dec = new TextDecoder();
+const STUN_SERVERS = [{ urls: 'stun:stun.l.google.com:19302' }];
+const CODE_PREFIX = 'PC1.';
+
+// ---------- small helpers ----------
+const b64u = {
+  enc(bytes) {
+    let s = '';
+    for (const b of bytes) s += String.fromCharCode(b);
+    return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  },
+  dec(str) {
+    const s = atob(str.replace(/-/g, '+').replace(/_/g, '/'));
+    return Uint8Array.from(s, (c) => c.charCodeAt(0));
+  },
+};
+function concat(...arrs) {
+  const out = new Uint8Array(arrs.reduce((n, a) => n + a.length, 0));
+  let i = 0;
+  for (const a of arrs) { out.set(a, i); i += a.length; }
+  return out;
+}
+function compareBytes(a, b) {
+  for (let i = 0; i < Math.min(a.length, b.length); i++) if (a[i] !== b[i]) return a[i] - b[i];
+  return a.length - b.length;
+}
+const sha256 = async (data) => new Uint8Array(await crypto.subtle.digest('SHA-256', data));
+function show(id) {
+  document.querySelectorAll('.view').forEach((v) => v.classList.toggle('active', v.id === id));
+}
+function setStatus(el, text, isErr = false) { el.textContent = text; el.classList.toggle('err', isErr); }
+async function copyText(text, btn) {
+  try { await navigator.clipboard.writeText(text); }
+  catch { const t = document.createElement('textarea'); t.value = text; document.body.append(t); t.select(); document.execCommand('copy'); t.remove(); }
+  const old = btn.textContent; btn.textContent = 'Copied!'; setTimeout(() => (btn.textContent = old), 1500);
+}
+async function shareText(text, btn) {
+  if (navigator.share) { try { await navigator.share({ text }); } catch { /* user cancelled */ } }
+  else copyText(text, btn);
+}
+
+// ---------- tiny IndexedDB key-value store ----------
+let dbPromise;
+function db() {
+  dbPromise ??= new Promise((res, rej) => {
+    const r = indexedDB.open('peerchat', 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('kv');
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  });
+  return dbPromise;
+}
+async function kvGet(key) {
+  const d = await db();
+  return new Promise((res, rej) => {
+    const r = d.transaction('kv').objectStore('kv').get(key);
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  });
+}
+async function kvSet(key, val) {
+  const d = await db();
+  return new Promise((res, rej) => {
+    const t = d.transaction('kv', 'readwrite');
+    t.objectStore('kv').put(val, key);
+    t.oncomplete = () => res(); t.onerror = () => rej(t.error);
+  });
+}
+
+// ---------- identity ----------
+let me = null; // { name, keys: CryptoKeyPair, pubRaw: Uint8Array }
+async function loadIdentity() {
+  const saved = await kvGet('identity');
+  if (!saved) return false;
+  me = { ...saved, pubRaw: new Uint8Array(await crypto.subtle.exportKey('raw', saved.keys.publicKey)) };
+  return true;
+}
+async function createIdentity(name) {
+  // Private key is non-extractable: page scripts can use it but never read it out.
+  const keys = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign', 'verify']);
+  await kvSet('identity', { name, keys });
+  await loadIdentity();
+}
+
+// ---------- connection codes ----------
+async function packCode(obj) {
+  const stream = new Blob([JSON.stringify(obj)]).stream().pipeThrough(new CompressionStream('deflate-raw'));
+  return CODE_PREFIX + b64u.enc(new Uint8Array(await new Response(stream).arrayBuffer()));
+}
+async function unpackCode(code, expectedType) {
+  code = code.replace(/\s+/g, '');
+  if (!code.startsWith(CODE_PREFIX)) throw new Error("That doesn't look like a PeerChat code.");
+  let obj;
+  try {
+    const stream = new Blob([b64u.dec(code.slice(CODE_PREFIX.length))]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+    obj = JSON.parse(await new Response(stream).text());
+  } catch { throw new Error('That code is damaged or incomplete. Try copying it again.'); }
+  if (obj.t !== expectedType) {
+    throw new Error(expectedType === 'offer' ? 'That is a reply, not an invite.' : 'That is an invite, not a reply.');
+  }
+  return obj;
+}
+
+// ---------- WebRTC ----------
+let pc = null;
+let session = null;
+
+function newPeerConnection() {
+  closeConnection();
+  pc = new RTCPeerConnection({ iceServers: $('#stun').checked ? STUN_SERVERS : [] });
+  const thisPc = pc;
+  pc.onconnectionstatechange = () => {
+    if (thisPc !== pc) return;
+    if (['failed', 'closed'].includes(pc.connectionState)) onDisconnected();
+  };
+  return pc;
+}
+function waitForIce(conn) {
+  // Gather all network candidates up front so a single code is enough.
+  return new Promise((res) => {
+    if (conn.iceGatheringState === 'complete') return res();
+    const timer = setTimeout(res, 5000);
+    conn.addEventListener('icegatheringstatechange', () => {
+      if (conn.iceGatheringState === 'complete') { clearTimeout(timer); res(); }
+    });
+  });
+}
+function closeConnection() {
+  const old = pc;
+  pc = null; session = null;
+  if (old) { try { old.close(); } catch {} }
+}
+
+// ---------- encrypted session ----------
+const HELLO_LABEL = enc.encode('peerchat-hello-v1');
+
+function attachChannel(channel) {
+  const s = {
+    channel, ready: false, peer: null, sendKey: null, recvKey: null,
+    sendCounter: 0, recvCounter: -1, safety: null, queue: Promise.resolve(),
+  };
+  session = s;
+  s.helloSent = new Promise((res) => (channel.onopen = () => res(sendHello(s))));
+  // Handle incoming data strictly in order.
+  channel.onmessage = (e) => { s.queue = s.queue.then(() => onData(s, e.data)).catch((err) => fail(s, err)); };
+  channel.onclose = () => { if (session === s) onDisconnected(); };
+  show('v-chat');
+  resetChatUI();
+}
+
+async function sendHello(s) {
+  s.eph = await crypto.subtle.generateKey({ name: 'ECDH', namedCurve: 'P-256' }, false, ['deriveBits']);
+  s.ephRaw = new Uint8Array(await crypto.subtle.exportKey('raw', s.eph.publicKey));
+  const sig = new Uint8Array(await crypto.subtle.sign(
+    { name: 'ECDSA', hash: 'SHA-256' }, me.keys.privateKey, concat(HELLO_LABEL, s.ephRaw)));
+  s.channel.send(JSON.stringify({
+    t: 'hello', name: me.name, id: b64u.enc(me.pubRaw), eph: b64u.enc(s.ephRaw), sig: b64u.enc(sig),
+  }));
+}
+
+async function onData(s, raw) {
+  if (session !== s) return;
+  const m = JSON.parse(raw);
+  if (m.t === 'hello' && !s.ready) return onHello(s, m);
+  if (m.t === 'msg' && s.ready) return onMessage(s, m);
+  throw new Error('Unexpected data from peer');
+}
+
+async function onHello(s, h) {
+  await s.helloSent;
+  const peerId = b64u.dec(h.id), peerEph = b64u.dec(h.eph);
+  const idKey = await crypto.subtle.importKey('raw', peerId, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['verify']);
+  const ok = await crypto.subtle.verify(
+    { name: 'ECDSA', hash: 'SHA-256' }, idKey, b64u.dec(h.sig), concat(HELLO_LABEL, peerEph));
+  if (!ok) throw new Error("The other device's identity signature is invalid.");
+  if (compareBytes(peerId, me.pubRaw) === 0) throw new Error('You connected to yourself.');
+
+  // ECDH -> HKDF -> one AES-GCM key per direction.
+  const peerEphKey = await crypto.subtle.importKey('raw', peerEph, { name: 'ECDH', namedCurve: 'P-256' }, false, []);
+  const shared = await crypto.subtle.deriveBits({ name: 'ECDH', public: peerEphKey }, s.eph.privateKey, 256);
+  const hkdfKey = await crypto.subtle.importKey('raw', shared, 'HKDF', false, ['deriveKey']);
+  const iAmLow = compareBytes(s.ephRaw, peerEph) < 0;
+  const salt = await sha256(iAmLow ? concat(s.ephRaw, peerEph) : concat(peerEph, s.ephRaw));
+  const dirKey = (info, usage) => crypto.subtle.deriveKey(
+    { name: 'HKDF', hash: 'SHA-256', salt, info: enc.encode(info) },
+    hkdfKey, { name: 'AES-GCM', length: 256 }, false, [usage]);
+  s.sendKey = await dirKey(iAmLow ? 'peerchat low->high' : 'peerchat high->low', 'encrypt');
+  s.recvKey = await dirKey(iAmLow ? 'peerchat high->low' : 'peerchat low->high', 'decrypt');
+  s.eph = null; // forget the ephemeral private key reference
+
+  // Safety number from both identity keys (same on both sides).
+  const [a, b] = compareBytes(me.pubRaw, peerId) < 0 ? [me.pubRaw, peerId] : [peerId, me.pubRaw];
+  const digest = await sha256(concat(enc.encode('peerchat-safety-v1'), a, b));
+  const dv = new DataView(digest.buffer);
+  s.safety = Array.from({ length: 6 }, (_, i) => String(dv.getUint32(i * 4) % 100000).padStart(5, '0'));
+
+  const idStr = b64u.enc(peerId);
+  const contacts = (await kvGet('contacts')) || {};
+  const known = contacts[idStr];
+  s.peer = { id: idStr, name: String(h.name || 'Friend').slice(0, 40), verified: !!known?.verified };
+  contacts[idStr] = { name: s.peer.name, verified: s.peer.verified, lastSeen: Date.now() };
+  await kvSet('contacts', contacts);
+
+  s.ready = true;
+  onSecure(s, !!known);
+}
+
+async function onMessage(s, m) {
+  if (!Number.isInteger(m.n) || m.n <= s.recvCounter) throw new Error('Replayed or out-of-order message rejected.');
+  const iv = new Uint8Array(12);
+  new DataView(iv.buffer).setUint32(8, m.n);
+  const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, s.recvKey, b64u.dec(m.c));
+  s.recvCounter = m.n;
+  const { text, ts } = JSON.parse(dec.decode(pt));
+  addMessage(String(text), 'them', ts);
+}
+
+async function sendMessage(text) {
+  const s = session;
+  if (!s?.ready || s.channel.readyState !== 'open') return;
+  const n = s.sendCounter++;
+  const iv = new Uint8Array(12);
+  new DataView(iv.buffer).setUint32(8, n); // unique per key, never reused
+  const ts = Date.now();
+  const ct = new Uint8Array(await crypto.subtle.encrypt(
+    { name: 'AES-GCM', iv }, s.sendKey, enc.encode(JSON.stringify({ text, ts }))));
+  s.channel.send(JSON.stringify({ t: 'msg', n, c: b64u.enc(ct) }));
+  addMessage(text, 'me', ts);
+}
+
+function fail(s, err) {
+  if (session !== s) return;
+  console.error(err);
+  addSystem('Security error: ' + err.message + ' The chat was closed.', true);
+  closeConnection();
+  setChatEnabled(false);
+  $('#peer-state').textContent = 'Disconnected';
+  $('#peer-state').className = '';
+}
+
+// ---------- chat UI ----------
+function resetChatUI() {
+  $('#messages').innerHTML = '';
+  $('#peer-name').textContent = 'Connecting…';
+  $('#peer-initial').textContent = '?';
+  $('#peer-state').textContent = 'Securing connection…';
+  $('#peer-state').className = '';
+  $('#verify-btn').disabled = true;
+  setChatEnabled(false);
+}
+function setChatEnabled(on) {
+  $('#msg-input').disabled = !on; $('#send-btn').disabled = !on;
+  if (on) $('#msg-input').focus();
+}
+function updatePeerState(s) {
+  const el = $('#peer-state');
+  if (s.peer.verified) { el.textContent = '🔒 Encrypted · Verified'; el.className = 'ok'; }
+  else { el.textContent = '🔒 Encrypted · Not verified yet'; el.className = 'warn'; }
+}
+function onSecure(s, known) {
+  $('#peer-name').textContent = s.peer.name;
+  $('#peer-initial').textContent = (s.peer.name[0] || '?').toUpperCase();
+  $('#verify-btn').disabled = false;
+  updatePeerState(s);
+  addSystem(known
+    ? `Connected to ${s.peer.name}. Messages are end-to-end encrypted.`
+    : `Connected to ${s.peer.name} for the first time. Tap Verify to make sure it's really them.`);
+  setChatEnabled(true);
+}
+function onDisconnected() {
+  if (!pc && !session) return;
+  closeConnection();
+  addSystem('Disconnected. Tap Leave to start a new chat.', true);
+  setChatEnabled(false);
+  $('#peer-state').textContent = 'Disconnected';
+  $('#peer-state').className = '';
+}
+function addMessage(text, who, ts) {
+  const box = $('#messages');
+  const div = document.createElement('div');
+  div.className = 'msg ' + who;
+  div.textContent = text;
+  const t = document.createElement('time');
+  t.textContent = new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  div.append(t);
+  box.append(div);
+  box.scrollTop = box.scrollHeight;
+}
+function addSystem(text, isErr = false) {
+  const div = document.createElement('div');
+  div.className = 'sys' + (isErr ? ' err' : '');
+  div.textContent = text;
+  $('#messages').append(div);
+  $('#messages').scrollTop = $('#messages').scrollHeight;
+}
+
+// ---------- flows ----------
+async function startInvite() {
+  show('v-invite');
+  const st = $('#invite-status');
+  $('#invite-code').value = ''; $('#reply-input').value = '';
+  $('#invite-copy').disabled = $('#invite-share').disabled = true;
+  setStatus(st, 'Creating invite…');
+  try {
+    const conn = newPeerConnection();
+    attachChannelLater(conn.createDataChannel('chat', { ordered: true }));
+    await conn.setLocalDescription(await conn.createOffer());
+    await waitForIce(conn);
+    if (conn !== pc) return;
+    $('#invite-code').value = await packCode({ t: 'offer', sdp: conn.localDescription.sdp });
+    $('#invite-copy').disabled = $('#invite-share').disabled = false;
+    setStatus(st, '');
+  } catch (e) { setStatus(st, 'Could not create invite: ' + e.message, true); }
+}
+// The inviter's channel exists before the chat screen should show; open the chat when it connects.
+function attachChannelLater(channel) {
+  const conn = pc;
+  channel.addEventListener('open', () => { if (pc === conn && !session) { attachChannel(channel); channel.onopen?.(); } }, { once: true });
+}
+async function acceptReply() {
+  const st = $('#invite-status');
+  try {
+    if (!pc || pc.signalingState !== 'have-local-offer') throw new Error('Create a new invite first.');
+    const o = await unpackCode($('#reply-input').value, 'answer');
+    await pc.setRemoteDescription({ type: 'answer', sdp: o.sdp });
+    setStatus(st, 'Connecting…');
+    setTimeout(() => { if (pc && !session && pc.connectionState !== 'connected') setStatus(st, 'Still trying… If this takes long, your networks may block direct connections.', true); }, 15000);
+  } catch (e) { setStatus(st, e.message, true); }
+}
+async function joinInvite() {
+  const st = $('#join-status');
+  $('#reply-card').hidden = true;
+  try {
+    const o = await unpackCode($('#join-input').value, 'offer');
+    setStatus(st, 'Creating reply…');
+    const conn = newPeerConnection();
+    conn.ondatachannel = (e) => attachChannelLater(e.channel);
+    await conn.setRemoteDescription({ type: 'offer', sdp: o.sdp });
+    await conn.setLocalDescription(await conn.createAnswer());
+    await waitForIce(conn);
+    if (conn !== pc) return;
+    $('#reply-code').value = await packCode({ t: 'answer', sdp: conn.localDescription.sdp });
+    $('#reply-card').hidden = false;
+    setStatus(st, 'Waiting for your friend to paste the reply…');
+  } catch (e) { setStatus(st, e.message, true); }
+}
+function goHome() {
+  closeConnection();
+  $('#hello').textContent = `Signed in as ${me.name}`;
+  $('#join-input').value = ''; $('#reply-card').hidden = true;
+  setStatus($('#join-status'), ''); setStatus($('#invite-status'), '');
+  show('v-home');
+}
+
+// ---------- wire up ----------
+$('#setup-btn').onclick = async () => {
+  const name = $('#name-input').value.trim();
+  if (!name) return $('#name-input').focus();
+  $('#setup-btn').disabled = true;
+  await createIdentity(name);
+  goHome();
+};
+$('#name-input').onkeydown = (e) => { if (e.key === 'Enter') $('#setup-btn').click(); };
+$('#go-invite').onclick = startInvite;
+$('#go-join').onclick = () => show('v-join');
+document.querySelectorAll('[data-home]').forEach((b) => (b.onclick = goHome));
+$('#invite-copy').onclick = (e) => copyText($('#invite-code').value, e.target);
+$('#invite-share').onclick = (e) => shareText($('#invite-code').value, e.target);
+$('#reply-copy').onclick = (e) => copyText($('#reply-code').value, e.target);
+$('#reply-share').onclick = (e) => shareText($('#reply-code').value, e.target);
+$('#reply-btn').onclick = acceptReply;
+$('#join-btn').onclick = joinInvite;
+$('#leave-btn').onclick = goHome;
+$('#send-btn').onclick = () => {
+  const text = $('#msg-input').value.trim();
+  if (!text) return;
+  $('#msg-input').value = '';
+  sendMessage(text);
+};
+$('#msg-input').onkeydown = (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('#send-btn').click(); }
+};
+$('#verify-btn').onclick = () => {
+  if (!session?.safety) return;
+  $('#verify-name').textContent = session.peer.name;
+  $('#safety').innerHTML = '';
+  for (const g of session.safety) { const d = document.createElement('div'); d.textContent = g; $('#safety').append(d); }
+  $('#verify-dlg').showModal();
+};
+$('#verify-close').onclick = () => $('#verify-dlg').close();
+$('#verify-ok').onclick = async () => {
+  const s = session;
+  $('#verify-dlg').close();
+  if (!s?.peer) return;
+  s.peer.verified = true;
+  const contacts = (await kvGet('contacts')) || {};
+  contacts[s.peer.id] = { ...contacts[s.peer.id], verified: true };
+  await kvSet('contacts', contacts);
+  updatePeerState(s);
+  addSystem(`You verified ${s.peer.name}.`);
+};
+
+(async () => {
+  if (!window.RTCPeerConnection || !crypto.subtle || !window.CompressionStream) {
+    document.body.innerHTML = '<p style="padding:24px">This browser is too old for PeerChat. Please use a current version of Chrome, Edge, Firefox or Safari.</p>';
+    return;
+  }
+  if (await loadIdentity()) goHome(); else show('v-setup');
+})();
+</script>
+</body>
+</html>
